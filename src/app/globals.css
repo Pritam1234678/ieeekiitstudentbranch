@@ -45,7 +45,7 @@ body {
   background: linear-gradient(180deg, #FFFFFF 0%, #F5F9FF 50%, #FFFFFF 100%);
   color: var(--navy);
   overflow-x: hidden;
-  cursor: none;
+  cursor: auto;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -170,6 +170,10 @@ a {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
+}
+
+.hero-letter {
+  will-change: transform, text-shadow;
 }
 
 .underline-animated {

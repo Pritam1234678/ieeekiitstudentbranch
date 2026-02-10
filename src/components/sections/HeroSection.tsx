@@ -7,6 +7,9 @@ import gsap from "gsap";
 const HeroSection = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
+  const orbitRef = useRef<HTMLDivElement | null>(null);
+  const floatingShapesRef = useRef<Array<HTMLDivElement | null>>([]);
+  
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -35,68 +38,117 @@ const HeroSection = () => {
         delay: 0.3,
       }
     );
+
+    const letters = headlineRef.current.querySelectorAll<HTMLElement>(".hero-letter");
+    const cleanupFns: Array<() => void> = [];
+    letters.forEach((letter) => {
+      const onEnter = () => {
+        gsap.to(letter, {
+          scale: 1.1,
+          textShadow: "0 0 12px rgba(11, 94, 215, 0.6), 0 0 22px rgba(23, 208, 89, 0.45)",
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      };
+      const onLeave = () => {
+        gsap.to(letter, {
+          scale: 1,
+          textShadow: "none",
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      };
+      letter.addEventListener("mouseenter", onEnter);
+      letter.addEventListener("mouseleave", onLeave);
+      cleanupFns.push(() => {
+        letter.removeEventListener("mouseenter", onEnter);
+        letter.removeEventListener("mouseleave", onLeave);
+      });
+    });
+
+    // Floating shapes animation
+    floatingShapesRef.current.forEach((shape, i) => {
+      if (shape) {
+        gsap.to(shape, {
+          y: "random(-20, 20)",
+          x: "random(-15, 15)",
+          rotation: "random(-5, 5)",
+          duration: "random(3, 5)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.2,
+        });
+      }
+    });
+
+    // Orbital rings animation
+    if (orbitRef.current) {
+      gsap.to(Array.from(orbitRef.current.children), {
+        rotation: 360,
+        duration: 20,
+        repeat: -1,
+        ease: "none",
+        stagger: {
+          each: 2,
+          from: "start",
+        },
+      });
+    }
+
+    return () => {
+      cleanupFns.forEach((cleanup) => cleanup());
+    };
   }, []);
 
   return (
     <section
       ref={heroRef}
-      className="relative h-screen flex flex-col justify-center overflow-hidden pt-20"
-      style={{
-        background: 'linear-gradient(180deg, #FFFFFF 0%, #EBF3FF 20%, #D6E4FF 50%, #C1D9FF 100%)'
-      }}
+      className="relative h-screen flex flex-col justify-center overflow-hidden pt-20 bg-white"
     >
-      {/* Animated Gradient Orbs */}
-      <motion.div 
-        className="absolute top-10 right-10 w-[600px] h-[600px] rounded-full blur-3xl"
-        style={{ 
-          background: 'radial-gradient(circle, rgba(11, 94, 215, 0.25) 0%, transparent 70%)',
-        }}
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.4, 0.6, 0.4],
-          x: [0, 50, 0],
-          y: [0, 30, 0]
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      <motion.div 
-        className="absolute bottom-0 left-0 w-[700px] h-[700px] rounded-full blur-3xl"
-        style={{ 
-          background: 'radial-gradient(circle, rgba(11, 94, 215, 0.3) 0%, transparent 70%)',
-        }}
-        animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.3, 0.5, 0.3],
-          x: [0, -40, 0],
-          y: [0, -20, 0]
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+      {/* Sophisticated Background System - Same as Contact Page */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Primary gradient mesh */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-radial from-[#E8F1FF] via-transparent to-transparent blur-3xl parallax-slow" />
+          <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-gradient-radial from-[#F0F7FF] via-transparent to-transparent blur-3xl parallax-medium" />
+          <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-gradient-radial from-[#EBF4FF] via-transparent to-transparent blur-3xl parallax-slow" />
+        </div>
 
-      <motion.div 
-        className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl"
-        style={{ 
-          background: 'radial-gradient(circle, rgba(193, 217, 255, 0.6) 0%, transparent 70%)',
-        }}
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.5, 0.7, 0.5],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
+        {/* Floating geometric shapes */}
+        <div className="absolute inset-0">
+          <div
+            ref={(el) => {
+              floatingShapesRef.current[0] = el;
+            }}
+            className="absolute top-[15%] left-[8%] w-16 h-16 border border-[#4A90E2]/20 rounded-full"
+          />
+          <div
+            ref={(el) => {
+              floatingShapesRef.current[1] = el;
+            }}
+            className="absolute top-[45%] right-[12%] w-12 h-12 border-2 border-[#6BA4E7]/15 rotate-45"
+          />
+          <div
+            ref={(el) => {
+              floatingShapesRef.current[2] = el;
+            }}
+            className="absolute bottom-[25%] left-[15%] w-20 h-20 border border-[#5A9AE5]/20"
+          />
+          <div
+            ref={(el) => {
+              floatingShapesRef.current[3] = el;
+            }}
+            className="absolute top-[60%] right-[20%] w-8 h-8 bg-gradient-to-br from-[#7FB3EA]/10 to-transparent rounded-full"
+          />
+        </div>
+
+        {/* Orbital rings */}
+        <div ref={orbitRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute w-[800px] h-[800px] border border-[#5A9AE5]/10 rounded-full" />
+          <div className="absolute w-[1000px] h-[1000px] border border-[#4A90E2]/8 rounded-full -translate-x-[100px] -translate-y-[100px]" />
+        </div>
+      </div>
 
       {/* Content Container - Flex Column */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
@@ -110,29 +162,29 @@ const HeroSection = () => {
             className="text-navy mb-8 leading-[0.95] font-bold tracking-tighter"
             style={{ fontSize: "clamp(3rem, 10vw, 8rem)" }}
           >
-            <div className="overflow-hidden">
+            <div className="overflow-visible">
               <span className="inline-block" style={{ color: '#00629b' }}>
                 {"IEEE".split("").map((char, i) => (
-                  <span key={i} className="char inline-block">{char === " " ? "\u00A0" : char}</span>
+                  <span key={i} className="char hero-letter inline-block">{char === " " ? "\u00A0" : char}</span>
                 ))}
               </span>
               {" "}
               <span className="inline-block" style={{ color: '#17d059' }}>
                 {"KIIT".split("").map((char, i) => (
-                  <span key={i} className="char inline-block">{char === " " ? "\u00A0" : char}</span>
+                  <span key={i} className="char hero-letter inline-block">{char === " " ? "\u00A0" : char}</span>
                 ))}
               </span>
             </div>
-            <div className="overflow-hidden mt-2">
+            <div className="overflow-visible mt-2">
               <span className="inline-block">
                 {"Student".split("").map((char, i) => (
-                  <span key={i} className="char inline-block">{char === " " ? "\u00A0" : char}</span>
+                  <span key={i} className="char hero-letter inline-block">{char === " " ? "\u00A0" : char}</span>
                 ))}
               </span>
               {" "}
               <span className="inline-block">
                 {"Branch".split("").map((char, i) => (
-                  <span key={i} className="char inline-block">{char === " " ? "\u00A0" : char}</span>
+                  <span key={i} className="char hero-letter inline-block">{char === " " ? "\u00A0" : char}</span>
                 ))}
               </span>
             </div>
