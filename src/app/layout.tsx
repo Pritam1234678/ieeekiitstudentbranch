@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "IEEE KIIT Student Branch | Advancing Technology for Humanity",
   description:
     "Official website of IEEE KIIT Student Branch - Fostering innovation, technical excellence, and professional development for students.",
+  icons: {
+    icon: "/mainlogo.png",
+    shortcut: "/mainlogo.png",
+    apple: "/mainlogo.png",
+  },
   keywords: [
     "IEEE",
     "KIIT",
