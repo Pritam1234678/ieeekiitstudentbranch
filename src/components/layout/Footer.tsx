@@ -53,7 +53,7 @@ const Footer = () => {
             <h4 className="text-xs font-semibold tracking-[0.3em] uppercase text-white/60">
               Connect
             </h4>
-            <div className="mt-6 grid grid-cols-2 gap-6">
+            <div className="mt-6 grid grid-cols-1 gap-4">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
