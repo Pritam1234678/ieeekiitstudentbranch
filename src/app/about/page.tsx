@@ -138,22 +138,24 @@ export default function AboutPage() {
       const connectors = gsap.utils.toArray<HTMLElement>(".timeline-connector");
 
       // Set initial states
-      gsap.set(heading, { opacity: 0, y: 40 });
+      if (heading) gsap.set(heading, { opacity: 0, y: 40 });
       gsap.set(circles, { scale: 0, opacity: 0 });
       gsap.set(cards, { opacity: 0, x: 100, rotationY: 15 });
       gsap.set(connectors, { scaleY: 0, transformOrigin: "top" });
 
       // Animate heading
-      gsap.to(heading, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 70%",
-        },
-      });
+      if (heading) {
+        gsap.to(heading, {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 70%",
+          },
+        });
+      }
 
       // Animate progress line with scroll
       gsap.to(progressLine, {
@@ -461,7 +463,7 @@ export default function AboutPage() {
                 ref={progressLineRef}
                 className="absolute inset-0 bg-gradient-to-b from-blue-600 via-blue-500 to-blue-600 rounded-full origin-top"
                 style={{ 
-                  scaleY: 0,
+                  transform: 'scaleY(0)',
                   boxShadow: '0 0 20px rgba(11, 94, 215, 0.5)'
                 }}
               />
