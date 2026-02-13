@@ -82,24 +82,49 @@ const EventsPreview = () => {
   }
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
+    <section className="relative min-h-screen bg-[#030712] py-24 overflow-hidden flex flex-col justify-center">
+      {/* Dynamic Background Elements - Award Winning Tech Look */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Deep, rich gradient base */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(17,24,39,1),_rgba(3,7,18,1))]" />
 
-      <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto px-4">
-        {/* Header */}
-        {/* Header - Static to ensure visibility */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Past Events
-          </h2>
-          <p className="text-xl text-blue-200 max-w-2xl mx-auto">
-            Explore our history of successful workshops, hackathons, and technical events
-            that have shaped our community.
-          </p>
+        {/* Animated Cyber Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20" />
+
+        {/* Ambient Glows */}
+        <motion.div
+          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.1, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full mix-blend-screen"
+        />
+        <motion.div
+          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.2, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/10 blur-[120px] rounded-full mix-blend-screen"
+        />
+      </div>
+
+      <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto px-4 w-full">
+        {/* Header - Premium Typography */}
+        <div className="text-center mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/50 mb-6 tracking-tight drop-shadow-2xl">
+              Past Events
+            </h2>
+            <div className="h-1 w-24 mx-auto bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-6" />
+            <p className="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+              A showcase of our <span className="text-blue-400 font-medium">legacy</span> and <span className="text-purple-400 font-medium">impact</span> through technology.
+            </p>
+          </motion.div>
         </div>
 
         {/* Cards Container - Centered */}
-        <div className="relative h-[380px] flex items-center justify-center mb-12">
+        <div className="relative h-[420px] flex items-center justify-center mb-16 perspective-1000">
           {events.map((event, index) => {
             let offset = index - activeIndex;
             if (offset > events.length / 2) offset -= events.length;
@@ -110,12 +135,13 @@ const EventsPreview = () => {
             const isHovered = hoveredIndex === index;
 
             // Dynamic spacing based on count to fit within view
-            const baseSpacing = events.length > 3 ? 420 : 500; // Even more space as requested
+            const baseSpacing = events.length > 3 ? 420 : 500;
             const shift = offset * baseSpacing;
 
             const scale = isActive ? 1 : 0.85;
-            const opacity = isActive ? 1 : 0.7; // Lower opacity for side cards to focus on center
+            const opacity = isVisible ? (isActive ? 1 : 0.4) : 0;
             const zIndex = isActive ? 50 : 40 - Math.abs(offset);
+            const rotateY = offset * -15; // 3D rotation effect
 
             return (
               <motion.div
@@ -125,112 +151,121 @@ const EventsPreview = () => {
                 animate={{
                   x: shift,
                   scale: scale,
-                  opacity: isVisible ? opacity : 0,
+                  opacity: opacity,
                   zIndex: zIndex,
+                  rotateY: rotateY,
                 }}
                 transition={{
                   type: "spring",
-                  stiffness: 260,
-                  damping: 20,
+                  stiffness: 200,
+                  damping: 25,
                 }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
                   pointerEvents: isVisible ? "auto" : "none",
+                  transformStyle: "preserve-3d",
                 }}
               >
                 <div
-                  className={`w-[340px] h-[340px] bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-blue-950/95 backdrop-blur-lg rounded-3xl p-8 border flex flex-col justify-between transition-all duration-500 relative overflow-hidden ${isActive
-                    ? "border-blue-500/40"
-                    : "border-blue-700/30"
-                    } ${isHovered
-                      ? "!border-blue-400/70 shadow-[0_0_50px_rgba(59,130,246,0.5)]"
+                  className={`w-[360px] h-[380px] bg-[#0f172a]/80 backdrop-blur-xl rounded-[2rem] p-8 border transition-all duration-500 relative overflow-hidden group
+                    ${isActive
+                      ? "border-blue-500/30 shadow-[0_0_60px_-15px_rgba(59,130,246,0.5)]"
+                      : "border-white/5"
+                    } ${isHovered && isActive
+                      ? "!border-blue-400/50 shadow-[0_0_80px_-20px_rgba(59,130,246,0.8)] scale-[1.02]"
                       : ""
                     }`}
                 >
-                  {/* Subtle gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 via-transparent to-blue-900/20 rounded-3xl" />
+                  {/* Glass Reflection */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-50 pointer-events-none" />
+
+                  {/* Glow Effect */}
+                  <div className={`absolute -inset-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl opacity-0 transition-opacity duration-500 ${isActive ? 'opacity-100' : ''}`} />
 
                   {/* Content */}
-                  <div className="relative z-10">
+                  <div className="relative z-10 h-full flex flex-col">
                     {/* Status Badge and Date */}
-                    <div className="flex justify-between items-start mb-6">
+                    <div className="flex justify-between items-start mb-8">
                       <span
-                        className={`px-4 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${isHovered
-                          ? "bg-blue-500 text-white shadow-lg shadow-blue-500/50"
-                          : "bg-blue-800/60 text-blue-200"
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 border ${isActive
+                          ? "bg-blue-500/10 border-blue-500/50 text-blue-400"
+                          : "bg-slate-800/50 border-slate-700 text-slate-400"
                           }`}
                       >
                         {event.status}
                       </span>
-                      <span className="text-blue-200/80 text-sm font-medium">
+                      <span className="text-slate-400 text-xs font-medium tracking-wide">
                         {formatDate(event.start_time)}
                       </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-3xl font-bold text-white mb-4 leading-tight">
+                    <h3 className="text-3xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors">
                       {event.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-blue-100/90 text-base leading-relaxed">
+                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-4">
                       {event.description}
                     </p>
-                  </div>
 
-                  {/* Decorative corner element */}
-                  <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-blue-500/10 to-transparent rounded-tl-full" />
+                    {/* Learn More - Only on Active */}
+                    <div className={`mt-auto pt-6 flex items-center text-sm font-semibold text-blue-400 transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                      <span>View Details</span>
+                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Dots Navigation - Centered */}
-        <div className="flex justify-center gap-3 mb-8">
+        {/* Dots Navigation - Premium Pills */}
+        <div className="flex justify-center gap-2 mb-12">
           {events.map((event, index) => (
             <button
               key={`${event.id}-dot-${index}`}
               onClick={() => setActiveIndex(index)}
-              className={`transition-all duration-300 rounded-full ${index === activeIndex
-                ? "w-12 h-3 bg-blue-500 shadow-lg shadow-blue-500/50"
-                : "w-3 h-3 bg-slate-600 hover:bg-slate-500"
+              className={`transition-all duration-500 h-1.5 rounded-full ${index === activeIndex
+                ? "w-16 bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                : "w-2 bg-slate-700 hover:bg-slate-600"
                 }`}
               aria-label={`Go to event ${index + 1}`}
             />
           ))}
         </div>
 
-        {/* View All Link - Centered */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
-          className="text-center"
-        >
+        {/* View All Link - Minimalist */}
+        <div className="text-center">
           <Link
             href="/events"
-            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200 group"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-medium transition-all duration-300 group hover:scale-105 backdrop-blur-md"
           >
-            View All Events
-            <svg
-              className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <span>Explore All Events</span>
+            <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+              <svg
+                className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </span>
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
+
   );
 };
 
