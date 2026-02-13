@@ -87,12 +87,8 @@ const EventsPreview = () => {
 
       <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        {/* Header - Static to ensure visibility */}
+        <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
             Past Events
           </h2>
@@ -100,7 +96,7 @@ const EventsPreview = () => {
             Explore our history of successful workshops, hackathons, and technical events
             that have shaped our community.
           </p>
-        </motion.div>
+        </div>
 
         {/* Cards Container - Centered */}
         <div className="relative h-[380px] flex items-center justify-center mb-12">
