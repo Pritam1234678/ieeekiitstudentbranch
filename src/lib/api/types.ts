@@ -2,7 +2,8 @@ export interface Event {
   id: number;
   title: string;
   description: string;
-  date: string;
+  start_time: string;
+  end_time?: string;
   location: string;
   image_url: string;
   registration_link: string;
