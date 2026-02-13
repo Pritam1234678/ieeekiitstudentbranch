@@ -16,9 +16,9 @@ const EventsPreview = () => {
   const { events: allEvents, loading, error } = useEvents();
 
   // Get only upcoming events, limit to 3 for preview
+  // Get only upcoming events
   const events = allEvents
-    .filter(event => event.status === EventStatus.UPCOMING)
-    .slice(0, 3);
+    .filter(event => event.status === EventStatus.UPCOMING);
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -104,13 +104,16 @@ const EventsPreview = () => {
             if (offset < -events.length / 2) offset += events.length;
 
             const isActive = offset === 0;
-            const isVisible = Math.abs(offset) <= 1;
+            const isVisible = Math.abs(offset) <= 1; // Max 3 visible (Center + 1 each side)
             const isHovered = hoveredIndex === index;
 
-            const shift = offset * 360;
-            const scale = isActive ? 1 : 0.88;
-            const opacity = isActive ? 1 : 0.6;
-            const zIndex = isActive ? 20 : 10 - Math.abs(offset);
+            // Dynamic spacing based on count to fit within view
+            const baseSpacing = events.length > 3 ? 420 : 500; // Even more space as requested
+            const shift = offset * baseSpacing;
+
+            const scale = isActive ? 1 : 0.85;
+            const opacity = isActive ? 1 : 0.7; // Lower opacity for side cards to focus on center
+            const zIndex = isActive ? 50 : 40 - Math.abs(offset);
 
             return (
               <motion.div
@@ -124,8 +127,9 @@ const EventsPreview = () => {
                   zIndex: zIndex,
                 }}
                 transition={{
-                  duration: 0.5,
-                  ease: "easeInOut",
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
                 }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
