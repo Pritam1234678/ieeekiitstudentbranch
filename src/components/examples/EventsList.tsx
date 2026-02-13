@@ -40,22 +40,29 @@ export function EventsList() {
 
       {/* Display events */}
       <div className="events-grid">
-        {events.map((event) => (
-          <div key={event.id} className="event-card">
-            <span className={`status-badge ${event.status.toLowerCase()}`}>
-              {event.status}
-            </span>
-            {event.image_url && (
-              <img src={event.image_url} alt={event.title} />
-            )}
-            <h3>{event.title}</h3>
-            <p>{event.description}</p>
-            <div className="time-info">
-              <p>Start: {new Date(event.start_time).toLocaleString()}</p>
-              <p>End: {new Date(event.end_time).toLocaleString()}</p>
+        {events.map((event) => {
+          const status = event.status ?? EventStatus.UPCOMING;
+          const endTime = event.end_time
+            ? new Date(event.end_time).toLocaleString()
+            : 'TBD';
+
+          return (
+            <div key={event.id} className="event-card">
+              <span className={`status-badge ${status.toLowerCase()}`}>
+                {status}
+              </span>
+              {event.image_url && (
+                <img src={event.image_url} alt={event.title} />
+              )}
+              <h3>{event.title}</h3>
+              <p>{event.description}</p>
+              <div className="time-info">
+                <p>Start: {new Date(event.start_time).toLocaleString()}</p>
+                <p>End: {endTime}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

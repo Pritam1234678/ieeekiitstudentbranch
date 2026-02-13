@@ -22,6 +22,19 @@ export interface EventWithStatus extends Event {
   displayStatus: EventStatus;
 }
 
+export interface CreateEventDTO {
+  title: string;
+  description: string;
+  start_time: string;
+  end_time?: string;
+  location?: string;
+  image_url?: string;
+  registration_link?: string;
+  status?: EventStatus;
+}
+
+export interface UpdateEventDTO extends Partial<CreateEventDTO> {}
+
 export interface EventStats {
   total: number;
   upcoming: number;
