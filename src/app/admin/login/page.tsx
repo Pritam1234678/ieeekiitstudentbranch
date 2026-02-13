@@ -200,7 +200,8 @@ export default function AdminLogin() {
                                     htmlFor="email"
                                     className="absolute left-8 -top-3.5 text-xs text-[#0B5ED7] font-medium transition-all duration-300 
                                     peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal 
-                                    peer-focus:-top-3.5 peer-focus:text-xs peer-focus:text-[#0B5ED7] peer-focus:font-medium"
+                                    peer-focus:-top-3.5 peer-focus:text-xs peer-focus:text-[#0B5ED7] peer-focus:font-medium
+                                    peer-[:autofill]:-top-3.5 peer-[:autofill]:text-xs peer-[:autofill]:text-[#0B5ED7] peer-[:autofill]:font-medium"
                                 >
                                     Email Address
                                 </label>
@@ -225,7 +226,8 @@ export default function AdminLogin() {
                                     htmlFor="password"
                                     className="absolute left-8 -top-3.5 text-xs text-[#0B5ED7] font-medium transition-all duration-300 
                                     peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal 
-                                    peer-focus:-top-3.5 peer-focus:text-xs peer-focus:text-[#0B5ED7] peer-focus:font-medium"
+                                    peer-focus:-top-3.5 peer-focus:text-xs peer-focus:text-[#0B5ED7] peer-focus:font-medium
+                                    peer-[:autofill]:-top-3.5 peer-[:autofill]:text-xs peer-[:autofill]:text-[#0B5ED7] peer-[:autofill]:font-medium"
                                 >
                                     Password
                                 </label>

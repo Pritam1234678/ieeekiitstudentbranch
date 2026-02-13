@@ -15,10 +15,16 @@ const EventsPreview = () => {
   // Fetch events from backend API
   const { events: allEvents, loading, error } = useEvents();
 
-  // Get only upcoming events, limit to 3 for preview
-  // Get only upcoming events
-  const events = allEvents
-    .filter(event => event.status === EventStatus.UPCOMING);
+  // Get only past events
+  let events = allEvents
+    .filter(event => event.status === EventStatus.PAST);
+
+  // Duplicate events if few to maintain carousel balance (Center, Left, Right)
+  if (events.length === 1) {
+    events = [...events, ...events, ...events]; // 1 -> 3
+  } else if (events.length === 2) {
+    events = [...events, ...events]; // 2 -> 4
+  }
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -63,7 +69,7 @@ const EventsPreview = () => {
     return (
       <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
         <div className="text-center">
-          <p className="text-blue-200 text-xl">No upcoming events at the moment</p>
+          <p className="text-blue-200 text-xl">No past events found</p>
           <Link
             href="/events"
             className="inline-block mt-4 text-blue-400 hover:text-blue-300 font-semibold"
@@ -88,11 +94,11 @@ const EventsPreview = () => {
           className="text-center mb-16"
         >
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Upcoming Events
+            Past Events
           </h2>
           <p className="text-xl text-blue-200 max-w-2xl mx-auto">
-            Join us for cutting-edge workshops, hackathons, and technical events
-            that push the boundaries of innovation.
+            Explore our history of successful workshops, hackathons, and technical events
+            that have shaped our community.
           </p>
         </motion.div>
 
@@ -117,7 +123,7 @@ const EventsPreview = () => {
 
             return (
               <motion.div
-                key={event.id}
+                key={`${event.id}-${index}`}
                 className="absolute"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{
@@ -189,7 +195,7 @@ const EventsPreview = () => {
         <div className="flex justify-center gap-3 mb-8">
           {events.map((event, index) => (
             <button
-              key={event.id}
+              key={`${event.id}-dot-${index}`}
               onClick={() => setActiveIndex(index)}
               className={`transition-all duration-300 rounded-full ${index === activeIndex
                 ? "w-12 h-3 bg-blue-500 shadow-lg shadow-blue-500/50"
