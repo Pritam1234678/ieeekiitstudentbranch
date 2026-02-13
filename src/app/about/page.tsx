@@ -7,6 +7,7 @@ import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Marquee from "@/components/layout/Marquee";
 
 const stats = [
   { label: "Active Members", value: "240+" },
@@ -126,7 +127,7 @@ export default function AboutPage() {
   // Enhanced Timeline GSAP Animation with Progress Bar
   useEffect(() => {
     if (!timelineSectionRef.current || !progressLineRef.current) return;
-    
+
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       const section = timelineSectionRef.current;
@@ -251,75 +252,68 @@ export default function AboutPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section 
-        ref={heroRef} 
-        className="relative min-h-[85vh] overflow-hidden px-6 pt-32 pb-20"
-        style={{
-          background: 'linear-gradient(180deg, #FFFFFF 0%, #EBF4FF 30%, #D6E8FF 70%, #C1DCFF 100%)'
-        }}
+      <section
+        ref={heroRef}
+        className="relative min-h-[85vh] overflow-hidden px-6 pt-32 pb-20 bg-[linear-gradient(180deg,#FFFFFF_0%,#EBF4FF_30%,#D6E8FF_70%,#C1DCFF_100%)]"
       >
         {/* Animated Orbs */}
-        <motion.div 
-          className="absolute top-20 right-10 w-[500px] h-[500px] rounded-full blur-3xl opacity-40"
-          style={{ background: 'radial-gradient(circle, #0B5ED7 0%, transparent 70%)' }}
+        <motion.div
+          className="absolute top-20 right-10 w-[500px] h-[500px] rounded-full blur-3xl opacity-40 bg-[radial-gradient(circle,#0B5ED7_0%,transparent_70%)]"
           animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], y: [0, 20, 0] }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div 
-          className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-30"
-          style={{ background: 'radial-gradient(circle, #00629B 0%, transparent 70%)' }}
+        <motion.div
+          className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-30 bg-[radial-gradient(circle,#00629B_0%,transparent_70%)]"
           animate={{ scale: [1.1, 1, 1.1], x: [0, -40, 0] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
 
         <div className="relative max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
-            <motion.div 
+            <motion.div
               className="max-w-4xl"
               style={{ opacity, y }}
             >
-            <motion.div
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 border-blue-200 bg-white/80 backdrop-blur-sm"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-              <span className="text-sm font-semibold text-blue-900 tracking-wider uppercase">
-                About IEEE KIIT
-              </span>
-            </motion.div>
+              <motion.div
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 border-blue-200 bg-white/80 backdrop-blur-sm"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                <span className="text-sm font-semibold text-blue-900 tracking-wider uppercase">
+                  About IEEE KIIT
+                </span>
+              </motion.div>
 
-            <motion.h1
-              className="mt-8 text-6xl md:text-8xl font-bold tracking-tight leading-[0.95]"
-              style={{ color: '#0A1A2F' }}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-            >
-              <span className="block " style={{ color: '#00629b' }}>IEEE</span>
-             
-              <span className="block mt-1 tracking-[0.35em] text-[0.95em]" style={{ color: '#17d059' }}>
-                KIIT
-              </span>
-              <span className="block" style={{ color: '#0A1A2F' }}>
-                STUDENT
-              </span>
-              <span className="block" style={{ color: '#0A1A2F' }}>
-                BRANCH
-              </span>
-            </motion.h1>
+              <motion.h1
+                className="mt-8 text-6xl md:text-8xl font-bold tracking-tight leading-[0.95] text-[#0A1A2F]"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.2 }}
+              >
+                <span className="block text-[#00629b]">IEEE</span>
 
-            <motion.p
-              className="mt-8 text-xl md:text-2xl leading-relaxed"
-              style={{ color: '#0A1A2F', opacity: 0.7 }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 0.7, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-            >
-              From research labs to global collaborations, we empower students to
-              build, lead, and innovate with purpose.
-            </motion.p>
+                <span className="block mt-1 tracking-[0.35em] text-[0.95em] text-[#17d059]">
+                  KIIT
+                </span>
+                <span className="block text-[#0A1A2F]">
+                  STUDENT
+                </span>
+                <span className="block text-[#0A1A2F]">
+                  BRANCH
+                </span>
+              </motion.h1>
+
+              <motion.p
+                className="mt-8 text-xl md:text-2xl leading-relaxed text-[#0A1A2F]/70"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 0.7, y: 0 }}
+                transition={{ duration: 1, delay: 0.4 }}
+              >
+                From research labs to global collaborations, we empower students to
+                build, lead, and innovate with purpose.
+              </motion.p>
             </motion.div>
 
             <motion.div
@@ -346,8 +340,7 @@ export default function AboutPage() {
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                className="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-8 border-2 border-blue-100 hover:border-blue-300 transition-all duration-500"
-                style={{ boxShadow: '0 8px 32px rgba(11, 94, 215, 0.1)' }}
+                className="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-8 border-2 border-blue-100 hover:border-blue-300 transition-all duration-500 shadow-[0_8px_32px_rgba(11,94,215,0.1)]"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -356,13 +349,8 @@ export default function AboutPage() {
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
-                  <div 
-                    className="text-5xl md:text-6xl font-bold mb-3"
-                    style={{ 
-                      background: 'linear-gradient(135deg, #0B5ED7 0%, #00629B 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent'
-                    }}
+                  <div
+                    className="text-5xl md:text-6xl font-bold mb-3 bg-[linear-gradient(135deg,#0B5ED7_0%,#00629B_100%)] bg-clip-text text-transparent"
                   >
                     {stat.value}
                   </div>
@@ -383,10 +371,10 @@ export default function AboutPage() {
             <div className="text-xs uppercase tracking-[0.35em] text-blue-700/70">
               About Focus
             </div>
-            <h2 className="mt-4 text-5xl md:text-6xl font-bold" style={{ color: "#0A1A2F" }}>
+            <h2 className="mt-4 text-5xl md:text-6xl font-bold text-[#0A1A2F]">
               Designed for builders, thinkers, and leaders.
             </h2>
-            <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: "#0A1A2F", opacity: 0.7 }}>
+            <p className="mt-4 text-lg max-w-2xl mx-auto text-[#0A1A2F]/70">
               Four pillars that define our community and how we grow together.
             </p>
           </div>
@@ -398,8 +386,7 @@ export default function AboutPage() {
                 ref={(el) => {
                   cardRefs.current[index] = el;
                 }}
-                className="relative rounded-[2rem] bg-white border-2 border-blue-100 p-10 transition-shadow"
-                style={{ boxShadow: "0 18px 60px rgba(11, 94, 215, 0.08)" }}
+                className="relative rounded-[2rem] bg-white border-2 border-blue-100 p-10 transition-shadow shadow-[0_18px_60px_rgba(11,94,215,0.08)]"
               >
                 <div className="about-card-glow pointer-events-none absolute inset-0 rounded-[2rem] bg-gradient-to-br from-blue-600/20 via-blue-200/10 to-transparent opacity-0" />
                 <div className="about-card-border pointer-events-none absolute inset-0 rounded-[2rem] border-2 border-blue-400/70 opacity-0" />
@@ -408,7 +395,7 @@ export default function AboutPage() {
                     <div className="text-xs uppercase tracking-[0.35em] text-blue-700/60">
                       {card.subtitle}
                     </div>
-                    <h3 className="about-card-heading mt-3 text-3xl font-bold" style={{ color: "#0A1A2F" }}>
+                    <h3 className="about-card-heading mt-3 text-3xl font-bold text-[#0A1A2F]">
                       {card.title}
                     </h3>
                   </div>
@@ -416,7 +403,7 @@ export default function AboutPage() {
                     {String(index + 1).padStart(2, "0")}
                   </div>
                 </div>
-                <p className="mt-4 text-base leading-relaxed" style={{ color: "#0A1A2F", opacity: 0.7 }}>
+                <p className="mt-4 text-base leading-relaxed text-[#0A1A2F]/70">
                   {card.description}
                 </p>
                 <div className="mt-6 space-y-2 text-sm text-blue-900/70">
@@ -434,21 +421,21 @@ export default function AboutPage() {
       </section>
 
       {/* Enhanced Timeline Section - Year beside line */}
-      <section 
+      <section
         ref={timelineSectionRef}
         className="px-6 py-32 bg-gradient-to-b from-white via-blue-50/60 to-white relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-blue-100/60 blur-[120px] opacity-80" />
-        
+
         <div className="relative max-w-6xl mx-auto">
           <div className="about-timeline-heading text-center mb-24">
             <div className="text-xs uppercase tracking-[0.35em] text-blue-700/70">
               Timeline
             </div>
-            <h2 className="mt-4 text-5xl md:text-6xl font-bold" style={{ color: '#0A1A2F' }}>
+            <h2 className="mt-4 text-5xl md:text-6xl font-bold text-[#0A1A2F]">
               Our Journey
             </h2>
-            <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: '#0A1A2F', opacity: 0.7 }}>
+            <p className="mt-4 text-lg max-w-2xl mx-auto text-[#0A1A2F]/70">
               Milestones that shaped our growth and community impact.
             </p>
             <div className="mt-6 w-20 h-1.5 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-blue-400" />
@@ -459,13 +446,9 @@ export default function AboutPage() {
             {/* Animated Progress Line - Centered */}
             <div className="absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2">
               <div className="absolute inset-0 bg-gradient-to-b from-blue-200 via-blue-100 to-blue-200 rounded-full opacity-30" />
-              <div 
+              <div
                 ref={progressLineRef}
-                className="absolute inset-0 bg-gradient-to-b from-blue-600 via-blue-500 to-blue-600 rounded-full origin-top"
-                style={{ 
-                  transform: 'scaleY(0)',
-                  boxShadow: '0 0 20px rgba(11, 94, 215, 0.5)'
-                }}
+                className="absolute inset-0 bg-gradient-to-b from-blue-600 via-blue-500 to-blue-600 rounded-full origin-top shadow-[0_0_20px_rgba(11,94,215,0.5)] scale-y-0"
               />
             </div>
 
@@ -474,12 +457,11 @@ export default function AboutPage() {
                 <div key={item.year} className="timeline-item relative">
                   {/* Year Circle on line */}
                   <div className="absolute left-1/2 top-0 -translate-x-1/2 z-10">
-                    <div 
-                      className="timeline-circle relative w-[100px] h-[100px] rounded-full flex items-center justify-center border-4 border-blue-600 bg-white"
-                      style={{ boxShadow: '0 8px 32px rgba(11, 94, 215, 0.2)' }}
+                    <div
+                      className="timeline-circle relative w-[100px] h-[100px] rounded-full flex items-center justify-center border-4 border-blue-600 bg-white shadow-[0_8px_32px_rgba(11,94,215,0.2)]"
                     >
                       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-transparent" />
-                      <span className="relative text-2xl font-bold" style={{ color: '#0B5ED7' }}>
+                      <span className="relative text-2xl font-bold text-[#0B5ED7]">
                         {item.year}
                       </span>
                     </div>
@@ -488,24 +470,20 @@ export default function AboutPage() {
                   {/* Content Card - Alternating sides */}
                   <div className="grid grid-cols-2 gap-8 items-center pt-2">
                     <div className={index % 2 === 0 ? 'pr-16' : 'col-start-2 pl-16'}>
-                      <div 
-                        className="timeline-card rounded-3xl bg-white px-10 py-8 border-2 border-blue-100 relative overflow-hidden"
-                        style={{ 
-                          boxShadow: '0 12px 48px rgba(11, 94, 215, 0.12)',
-                          transformStyle: 'preserve-3d'
-                        }}
+                      <div
+                        className="timeline-card rounded-3xl bg-white px-10 py-8 border-2 border-blue-100 relative overflow-hidden shadow-[0_12px_48px_rgba(11,94,215,0.12)] [transform-style:preserve-3d]"
                       >
                         {/* Card background gradient */}
                         <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-60" />
-                        
+
                         <div className="relative">
-                          <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: '#0A1A2F' }}>
+                          <h3 className="text-3xl md:text-4xl font-bold mb-4 text-[#0A1A2F]">
                             {item.title}
                           </h3>
-                          <p className="text-lg leading-relaxed" style={{ color: '#0A1A2F', opacity: 0.75 }}>
+                          <p className="text-lg leading-relaxed text-[#0A1A2F]/75">
                             {item.description}
                           </p>
-                          
+
                           {/* Decorative line */}
                           <div className="mt-6 h-1 w-16 rounded-full bg-gradient-to-r from-blue-600 to-blue-400" />
                         </div>
@@ -524,25 +502,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className=" bg-white">
-        <div className="marquee w-screen border-y border-blue-100 bg-white/90 backdrop-blur-md shadow-[0_24px_60px_rgba(11,94,215,0.12)] relative left-1/2 -translate-x-1/2">
-          <div className="marquee__inner">
-            {[0, 1].map((track) => (
-              <div key={track} className="marquee__track gap-16 px-10 py-6">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="text-sm md:text-base font-semibold tracking-[0.26em] uppercase">
-                      <span style={{ color: "#00629b" }}>IEEE</span>{" "}
-                      <span style={{ color: "#17d059" }}>KIIT</span>{" "}
-                      <span className="text-black">Student Branch</span>
-                    </span>
-                    <span className="text-black/20 text-sm tracking-[0.2em]">•</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+      <section className="bg-white">
+        <Marquee />
       </section>
 
       <Footer />

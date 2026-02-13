@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Marquee from "@/components/layout/Marquee";
 import gsap from "gsap";
 
 const HeroSection = () => {
@@ -9,7 +10,7 @@ const HeroSection = () => {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const orbitRef = useRef<HTMLDivElement | null>(null);
   const floatingShapesRef = useRef<Array<HTMLDivElement | null>>([]);
-  
+
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -22,7 +23,7 @@ const HeroSection = () => {
     if (!headlineRef.current) return;
 
     const chars = headlineRef.current.querySelectorAll(".char");
-    
+
     gsap.fromTo(
       chars,
       {
@@ -152,24 +153,23 @@ const HeroSection = () => {
 
       {/* Content Container - Flex Column */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
-        <motion.div 
+        <motion.div
           className="w-full max-w-7xl mx-auto px-6 text-center"
           style={{ opacity }}
         >
           {/* Headline - Character Animation */}
           <h1
             ref={headlineRef}
-            className="text-navy mb-8 leading-[0.95] font-bold tracking-tighter"
-            style={{ fontSize: "clamp(3rem, 10vw, 8rem)" }}
+            className="text-navy mb-8 leading-[0.95] font-bold tracking-tighter text-[clamp(3rem,10vw,8rem)]"
           >
             <div className="overflow-visible">
-              <span className="inline-block" style={{ color: '#00629b' }}>
+              <span className="inline-block text-[#00629b]">
                 {"IEEE".split("").map((char, i) => (
                   <span key={i} className="char hero-letter inline-block">{char === " " ? "\u00A0" : char}</span>
                 ))}
               </span>
               {" "}
-              <span className="inline-block" style={{ color: '#17d059' }}>
+              <span className="inline-block text-[#17d059]">
                 {"KIIT".split("").map((char, i) => (
                   <span key={i} className="char hero-letter inline-block">{char === " " ? "\u00A0" : char}</span>
                 ))}
@@ -208,15 +208,11 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <button className="group relative px-10 py-5 text-white rounded-full text-base font-semibold overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, #0B5ED7 0%, #0A1A2F 100%)',
-                boxShadow: '0 8px 30px rgba(11, 94, 215, 0.4)'
-              }}>
+            <button className="group relative px-10 py-5 text-white rounded-full text-base font-semibold overflow-hidden bg-gradient-to-br from-[#0B5ED7] to-[#0A1A2F] shadow-[0_8px_30px_rgba(11,94,215,0.4)]">
               <span className="relative z-10">Explore Our Journey</span>
-              <motion.div 
-                className="absolute inset-0"
-                style={{ background: 'linear-gradient(135deg, #0A1A2F 0%, #0B5ED7 100%)' }}
+
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-[#0A1A2F] to-[#0B5ED7]"
                 initial={{ opacity: 0 }}
                 whileHover={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
@@ -226,32 +222,7 @@ const HeroSection = () => {
         </motion.div>
       </div>
 
-      {/* Marquee - At Bottom, Inside Viewport */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 1.55, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full mt-auto"
-      >
-        <div className="marquee w-full border-t border-royal/15 bg-white/65 backdrop-blur-md shadow-[0_-18px_60px_rgba(11,94,215,0.1)]">
-          <div className="marquee__inner">
-            {[0, 1].map((track) => (
-              <div key={track} className="marquee__track gap-12 px-10 py-4">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="text-[12px] md:text-sm font-semibold tracking-[0.22em] uppercase">
-                      <span style={{ color: "#00629b" }}>IEEE</span>{" "}
-                      <span style={{ color: "#17d059" }}>KIIT</span>{" "}
-                      <span className="text-black">Student Branch</span>
-                    </span>
-                    <span className="text-black/20 text-xs tracking-[0.2em]">•</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
+      <Marquee delay={1.55} />
     </section>
   );
 };

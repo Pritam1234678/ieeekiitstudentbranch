@@ -7,6 +7,14 @@ const socialLinks = [
   { name: "Twitter", url: "#" },
   { name: "GitHub", url: "#" },
 ];
+const navLinks = [
+  { label: "Home", path: "/" },
+  { label: "About", path: "/about" },
+  { label: "Events", path: "/events" },
+  { label: "Societies", path: "/socity" },
+  { label: "Members", path: "/members" },
+  { label: "Contact", path: "/contact" },
+];
 
 const Footer = () => {
   return (
@@ -35,14 +43,14 @@ const Footer = () => {
               Navigate
             </h4>
             <ul className="mt-6 space-y-4">
-              {["Home", "About", "Events", "Members", "Contact"].map((item) => (
-                <li key={item}>
+              {navLinks.map((item) => (
+                <li key={item.label}>
                   <Link
-                    href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                    href={item.path}
                     className="group inline-flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"
                   >
                     <span className="h-px w-6 bg-white/20 transition-all group-hover:w-10 group-hover:bg-blue-300" />
-                    <span className="underline-animated">{item}</span>
+                    <span className="underline-animated">{item.label}</span>
                   </Link>
                 </li>
               ))}
@@ -64,7 +72,7 @@ const Footer = () => {
                 >
                   <span className="h-px w-6 bg-white/20 transition-all group-hover:w-10 group-hover:bg-blue-300" />
                   <span className="underline-animated">{social.name}</span>
-                
+
                 </a>
               ))}
             </div>

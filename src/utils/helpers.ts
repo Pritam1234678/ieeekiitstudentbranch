@@ -1,13 +1,53 @@
 // Utility functions and helpers
 
-// Format date to readable string
-export const formatDate = (dateString: string): string => {
+// Format date to readable string (IST)
+export const formatDateIST = (dateString: string | Date): string => {
+  if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+};
+
+// Format date and time (IST)
+export const formatDateTimeIST = (dateString: string | Date): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+// Get ISO string for datetime-local input (IST)
+// Converts UTC date to IST time for input value: YYYY-MM-DDThh:mm
+export const toISTInputString = (dateString: string | Date): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  
+  // Get time in Kolkata
+  const istDate = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+  
+  const year = istDate.getFullYear();
+  const month = String(istDate.getMonth() + 1).padStart(2, "0");
+  const day = String(istDate.getDate()).padStart(2, "0");
+  const hours = String(istDate.getHours()).padStart(2, "0");
+  const minutes = String(istDate.getMinutes()).padStart(2, "0");
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
+// Deprecated: Use formatDateIST instead
+export const formatDate = (dateString: string): string => {
+  return formatDateIST(dateString);
 };
 
 // Truncate text to specified length

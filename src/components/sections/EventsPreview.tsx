@@ -2,33 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-
-const events = [
-  {
-    id: 1,
-    title: "TechXcelerate 2026",
-    date: "March 15, 2026",
-    description:
-      "Annual technical symposium featuring workshops, competitions, and keynote speakers from industry leaders.",
-    category: "Symposium",
-  },
-  {
-    id: 2,
-    title: "AI/ML Workshop Series",
-    date: "February 20, 2026",
-    description:
-      "Hands-on workshop covering fundamentals of artificial intelligence and machine learning applications.",
-    category: "Workshop",
-  },
-  {
-    id: 3,
-    title: "HackIEEE 48hr",
-    date: "April 5, 2026",
-    description:
-      "48-hour hackathon challenging students to build innovative solutions for real-world problems.",
-    category: "Hackathon",
-  },
-];
+import { useEvents } from "@/lib/api/hooks";
+import { EventStatus } from "@/lib/api/types";
+import { formatDateIST } from "@/utils/helpers";
 
 const EventsPreview = () => {
   const containerRef = useRef(null);
@@ -36,12 +12,68 @@ const EventsPreview = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  // Fetch events from backend API
+  const { events: allEvents, loading, error } = useEvents();
+
+  // Get only upcoming events, limit to 3 for preview
+  const events = allEvents
+    .filter(event => event.status === EventStatus.UPCOMING)
+    .slice(0, 3);
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return formatDateIST(dateString);
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % events.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    if (events.length > 0) {
+      const interval = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % events.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [events.length]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-blue-200 text-xl">Loading Events...</p>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 text-xl mb-4">Failed to load events</p>
+          <p className="text-blue-200">{error}</p>
+        </div>
+      </section>
+    );
+  }
+
+  // No events state
+  if (events.length === 0) {
+    return (
+      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-blue-200 text-xl">No upcoming events at the moment</p>
+          <Link
+            href="/events"
+            className="inline-block mt-4 text-blue-400 hover:text-blue-300 font-semibold"
+          >
+            View All Events
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden">
@@ -102,34 +134,31 @@ const EventsPreview = () => {
                 }}
               >
                 <div
-                  className={`w-[340px] h-[340px] bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-blue-950/95 backdrop-blur-lg rounded-3xl p-8 border flex flex-col justify-between transition-all duration-500 relative overflow-hidden ${
-                    isActive
-                      ? "border-blue-500/40"
-                      : "border-blue-700/30"
-                  } ${
-                    isHovered
+                  className={`w-[340px] h-[340px] bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-blue-950/95 backdrop-blur-lg rounded-3xl p-8 border flex flex-col justify-between transition-all duration-500 relative overflow-hidden ${isActive
+                    ? "border-blue-500/40"
+                    : "border-blue-700/30"
+                    } ${isHovered
                       ? "!border-blue-400/70 shadow-[0_0_50px_rgba(59,130,246,0.5)]"
                       : ""
-                  }`}
+                    }`}
                 >
                   {/* Subtle gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 via-transparent to-blue-900/20 rounded-3xl" />
-                  
+
                   {/* Content */}
                   <div className="relative z-10">
-                    {/* Category Badge and Date */}
+                    {/* Status Badge and Date */}
                     <div className="flex justify-between items-start mb-6">
                       <span
-                        className={`px-4 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${
-                          isHovered
-                            ? "bg-blue-500 text-white shadow-lg shadow-blue-500/50"
-                            : "bg-blue-800/60 text-blue-200"
-                        }`}
+                        className={`px-4 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${isHovered
+                          ? "bg-blue-500 text-white shadow-lg shadow-blue-500/50"
+                          : "bg-blue-800/60 text-blue-200"
+                          }`}
                       >
-                        {event.category}
+                        {event.status}
                       </span>
                       <span className="text-blue-200/80 text-sm font-medium">
-                        {event.date}
+                        {formatDate(event.start_time)}
                       </span>
                     </div>
 
@@ -158,11 +187,10 @@ const EventsPreview = () => {
             <button
               key={event.id}
               onClick={() => setActiveIndex(index)}
-              className={`transition-all duration-300 rounded-full ${
-                index === activeIndex
-                  ? "w-12 h-3 bg-blue-500 shadow-lg shadow-blue-500/50"
-                  : "w-3 h-3 bg-slate-600 hover:bg-slate-500"
-              }`}
+              className={`transition-all duration-300 rounded-full ${index === activeIndex
+                ? "w-12 h-3 bg-blue-500 shadow-lg shadow-blue-500/50"
+                : "w-3 h-3 bg-slate-600 hover:bg-slate-500"
+                }`}
               aria-label={`Go to event ${index + 1}`}
             />
           ))}
