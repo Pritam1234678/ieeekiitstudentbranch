@@ -28,13 +28,12 @@ export default function EventsPage() {
   }, [allEvents, selectedStatus]);
 
   // Format date for display
-  // Format date for display
   const formatDate = (dateString: string) => {
     return formatDateIST(dateString);
   };
 
   // Get status badge color
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status?: string) => {
     switch (status) {
       case EventStatus.LIVE:
         return "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg animate-pulse";
