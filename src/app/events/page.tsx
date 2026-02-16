@@ -275,9 +275,7 @@ export default function EventsPage() {
           )}
         </div>
       </section>
-      <section className="bg-white">
-        <Marquee />
-      </section>
+     
       <Footer />
     </main>
   );
