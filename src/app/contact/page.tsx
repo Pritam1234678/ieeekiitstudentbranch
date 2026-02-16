@@ -139,7 +139,7 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Success animation
     gsap.to(".submit-btn", {
       scale: 0.95,
@@ -160,9 +160,9 @@ export default function ContactPage() {
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Primary gradient mesh */}
         <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-radial from-[#E8F1FF] via-transparent to-transparent blur-3xl parallax-slow" />
-          <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-gradient-radial from-[#F0F7FF] via-transparent to-transparent blur-3xl parallax-medium" />
-          <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-gradient-radial from-[#EBF4FF] via-transparent to-transparent blur-3xl parallax-slow" />
+          <div className="absolute top-0 left-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-gradient-radial from-[#E8F1FF] via-transparent to-transparent blur-3xl parallax-slow" />
+          <div className="absolute top-1/3 right-1/4 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-gradient-radial from-[#F0F7FF] via-transparent to-transparent blur-3xl parallax-medium" />
+          <div className="absolute bottom-0 left-0 w-[350px] h-[350px] md:w-[700px] md:h-[700px] bg-gradient-radial from-[#EBF4FF] via-transparent to-transparent blur-3xl parallax-slow" />
         </div>
 
         {/* Floating geometric shapes */}
@@ -201,14 +201,14 @@ export default function ContactPage() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative pt-40 pb-24 px-6">
+      <section ref={heroRef} className="relative pt-28 md:pt-40 pb-16 md:pb-24 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <div className="hero-badge inline-flex items-center gap-2 px-5 py-2 border border-[#4A90E2]/30 rounded-full text-[11px] font-medium tracking-[0.2em] uppercase text-[#2E5C8A] mb-8">
             <span className="w-1.5 h-1.5 bg-[#4A90E2] rounded-full animate-pulse" />
             Get In Touch
           </div>
 
-          <h1 className="hero-title text-6xl md:text-8xl font-light tracking-tight text-[#0F1419] mb-6 leading-[0.95]">
+          <h1 className="hero-title text-4xl md:text-6xl lg:text-8xl font-light tracking-tight text-[#0F1419] mb-6 leading-[1.1] md:leading-[0.95]">
             Let&apos;s Create
             <span className="block font-medium bg-gradient-to-r from-[#2E5C8A] via-[#4A90E2] to-[#5A9AE5] bg-clip-text text-transparent mt-2">
               Something Remarkable
@@ -225,15 +225,15 @@ export default function ContactPage() {
       {/* Main Content Grid */}
       <section className="relative pb-32 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8">
-          
+
           {/* Contact Form */}
           <div className="space-y-6">
             <div ref={formRef} className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-r from-[#E8F1FF] to-[#F0F7FF] rounded-[40px] opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700" />
-              
-              <div className="relative bg-white/80 backdrop-blur-sm border border-[#D4E4F7]/60 rounded-[32px] p-12 shadow-[0_8px_32px_rgba(74,144,226,0.08)]">
+
+              <div className="relative bg-white/80 backdrop-blur-sm border border-[#D4E4F7]/60 rounded-[32px] p-6 md:p-12 shadow-[0_8px_32px_rgba(74,144,226,0.08)]">
                 <div className="form-field">
-                  <h2 className="text-4xl font-light text-[#0F1419] mb-2">
+                  <h2 className="text-3xl md:text-4xl font-light text-[#0F1419] mb-2">
                     Send us a message
                   </h2>
                   <p className="text-[#64748B] font-light">
@@ -326,7 +326,7 @@ export default function ContactPage() {
 
             <div className="contact-card group relative">
               <div className="absolute -inset-1 bg-gradient-to-br from-[#E8F1FF] to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-              <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-3xl p-16 min-h-[320px] transition-all duration-300 hover:border-[#4A90E2]/40 flex items-center justify-center">
+              <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-3xl p-8 md:p-16 min-h-[240px] md:min-h-[320px] transition-all duration-300 hover:border-[#4A90E2]/40 flex items-center justify-center">
                 <Image
                   src="/mainlogo.png"
                   alt="IEEE KIIT Student Branch"
@@ -341,7 +341,7 @@ export default function ContactPage() {
           {/* Contact Information Sidebar */}
           <div className="space-y-6">
             {/* Contact Cards Grid */}
-            <div ref={contactCardsRef} className="grid grid-cols-2 gap-4">
+            <div ref={contactCardsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="contact-card group relative">
                 <div className="absolute -inset-1 bg-gradient-to-br from-[#E8F1FF] to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
                 <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-2xl p-6 transition-all duration-300 hover:border-[#4A90E2]/40">
@@ -408,21 +408,24 @@ export default function ContactPage() {
                 <p className="text-[#64748B] text-sm font-light mb-6">
                   Founders Hall, KIIT Deemed University
                 </p>
-                <div className="relative h-48 bg-gradient-to-br from-[#F0F7FF] via-white to-[#E8F1FF] rounded-2xl overflow-hidden border border-[#D4E4F7]/50">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <svg className="w-12 h-12 text-[#4A90E2] mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                      </svg>
-                      <p className="text-xs font-medium text-[#4A90E2]">Interactive Map</p>
-                    </div>
-                  </div>
+                <div className="relative h-64 bg-slate-100 rounded-2xl overflow-hidden border border-[#D4E4F7]/50">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3740.636737330588!2d85.81665497520067!3d20.35661918112836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19093cc3e1974b%3A0x85a345e1f4fcce86!2sKIIT%20Student%20Activity%20Center%20-%20KSAC!5e0!3m2!1sen!2sin!4v1709400000000!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="KIIT Student Activity Center Map"
+                    className="grayscale hover:grayscale-0 transition-all duration-500"
+                  />
                 </div>
               </div>
             </div>
 
             {/* Social Links */}
-            <div className="contact-card group relative">
+            <div className="contact-card group relaitve">
               <div className="absolute -inset-1 bg-gradient-to-br from-[#E8F1FF] to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
               <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-3xl p-8 transition-all duration-300 hover:border-[#4A90E2]/40">
                 <h3 className="text-2xl font-light text-[#0F1419] mb-2">
@@ -448,27 +451,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
-      <div className="relative z-10 w-full">
-        <div className="marquee w-full border-t border-[#4A90E2]/15 bg-white/70 backdrop-blur-md shadow-[0_-18px_60px_rgba(74,144,226,0.12)]">
-          <div className="marquee__inner">
-            {[0, 1].map((track) => (
-              <div key={track} className="marquee__track gap-12 px-10 py-4">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <div key={`${track}-${i}`} className="flex items-center gap-3">
-                    <span className="text-[12px] md:text-sm font-semibold tracking-[0.22em] uppercase">
-                      <span style={{ color: "#00629b" }}>IEEE</span>{" "}
-                      <span style={{ color: "#17d059" }}>KIIT</span>{" "}
-                      <span className="text-black">Student Branch</span>
-                    </span>
-                    <span className="text-black/20 text-xs tracking-[0.2em]">•</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       <Footer />
     </main>

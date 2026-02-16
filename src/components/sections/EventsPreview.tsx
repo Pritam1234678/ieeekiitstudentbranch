@@ -45,6 +45,12 @@ const EventsPreview = () => {
     return `linear-gradient(135deg, hsl(${hue1}, 70%, 20%), hsl(${hue2}, 80%, 10%))`;
   };
 
+  const handleHoverActivate = (id: string) => {
+    if (typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      setActiveId(id);
+    }
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -73,7 +79,7 @@ const EventsPreview = () => {
   }
 
   return (
-    <section className="relative min-h-screen bg-[#020617] py-24 overflow-hidden flex flex-col justify-center">
+    <section className="relative min-h-screen bg-[#020617] py-16 sm:py-20 md:py-24 overflow-hidden flex flex-col justify-center">
       {/* Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px]" />
@@ -81,19 +87,19 @@ const EventsPreview = () => {
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 max-w-7xl">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-16 gap-6"
         >
           <div>
-            <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-4">
+            <h2 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-4">
               Past <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Events</span>
             </h2>
-            <p className="text-blue-200/60 text-lg max-w-xl leading-relaxed">
+            <p className="text-blue-200/60 text-base sm:text-lg max-w-xl leading-relaxed">
               Explore our history of innovation, workshops, and technical breakthroughs.
             </p>
           </div>
@@ -113,7 +119,7 @@ const EventsPreview = () => {
 
         {/* Interactive Gallery */}
         <LayoutGroup>
-          <div className="flex flex-col md:flex-row gap-4 h-[600px] w-full">
+          <div className="flex flex-col md:flex-row gap-4 md:h-[600px] w-full">
             {events.map((event, index) => {
               const isActive = activeId === event.id;
 
@@ -121,10 +127,16 @@ const EventsPreview = () => {
                 <motion.div
                   key={event.id}
                   layout
+                  tabIndex={0}
+                  aria-expanded={isActive}
                   onClick={() => setActiveId(event.id)}
-                  onMouseEnter={() => setActiveId(event.id)}
+                  onMouseEnter={() => handleHoverActivate(event.id)}
+                  onFocus={() => setActiveId(event.id)}
                   className={`relative rounded-[32px] overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]
-                                        ${isActive ? 'flex-[3]' : 'flex-[0.5] opacity-60 hover:opacity-100 hover:flex-[0.8]'}
+                                        min-h-[140px] sm:min-h-[180px] md:min-h-0
+                                        ${isActive
+                                          ? 'opacity-100 min-h-[280px] sm:min-h-[340px] md:min-h-0 md:flex-[3]'
+                                          : 'opacity-90 md:opacity-60 md:flex-[0.5] hover:opacity-100 md:hover:flex-[0.8]'}
                                     `}
                 >
                   {/* Event Image / Gradient */}
@@ -137,7 +149,7 @@ const EventsPreview = () => {
                           fill
                           className="object-cover transition-transform duration-1000 ease-out"
                           style={{ transform: isActive ? 'scale(1.05)' : 'scale(1.5)' }}
-                          sizes="(max-width: 768px) 100vw, 50vw"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 35vw"
                         />
                         <div className="absolute inset-0 bg-black/40" />
                       </div>
@@ -152,9 +164,9 @@ const EventsPreview = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col justify-end p-8">
+                  <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-8">
                     {/* Index Number */}
-                    <div className={`absolute top-6 left-6 text-4xl font-bold tracking-tighter text-white/10 transition-all duration-500
+                    <div className={`absolute top-4 left-4 sm:top-6 sm:left-6 text-3xl sm:text-4xl font-bold tracking-tighter text-white/10 transition-all duration-500
                                             ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}
                                         `}>
                       0{index + 1}
@@ -162,7 +174,7 @@ const EventsPreview = () => {
 
                     <motion.div layout="position" className="space-y-4">
                       {/* Date Badge */}
-                      <div className={`flex items-center gap-3 transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                      <div className={`flex items-center gap-3 transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-4'}`}>
                         <div className="h-[1px] w-8 bg-blue-500/50" />
                         <span className="text-blue-300 font-mono text-xs tracking-widest uppercase">
                           {formatDate(event.start_time)}
@@ -170,22 +182,22 @@ const EventsPreview = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className={`font-bold text-white leading-tight transition-all duration-500 origin-left whitespace-nowrap md:whitespace-normal
-                                                ${isActive ? 'text-4xl md:text-5xl mb-2 translate-x-0 rotate-0' : 'text-2xl md:-rotate-90 md:translate-x-[-50%] md:absolute md:bottom-24 md:left-8'}
+                      <h3 className={`font-bold text-white leading-tight transition-all duration-500 origin-left whitespace-normal md:whitespace-nowrap
+                                                ${isActive ? 'text-2xl sm:text-3xl md:text-5xl mb-2 translate-x-0 rotate-0' : 'text-lg sm:text-xl md:text-2xl md:-rotate-90 md:translate-x-[-50%] md:absolute md:bottom-24 md:left-8'}
                                             `}>
                         {event.title}
                       </h3>
 
                       {/* Expanded Details */}
-                      <div className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${isActive ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                        <p className="text-white/70 text-base md:text-lg mb-6 line-clamp-3 max-w-lg">
+                      <div className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${isActive ? 'max-h-[260px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <p className="text-white/70 text-sm sm:text-base md:text-lg mb-5 sm:mb-6 line-clamp-3 max-w-lg">
                           {event.description}
                         </p>
                         {event.registration_link ? (
                           <Link
                             href={event.registration_link}
                             target="_blank"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium transition-colors border border-white/10"
+                            className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs sm:text-sm font-medium transition-colors border border-white/10"
                             onClick={(e) => e.stopPropagation()}
                           >
                             View Details
@@ -196,7 +208,7 @@ const EventsPreview = () => {
                         ) : (
                           <Link
                             href={`/events/${event.id}`}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium transition-colors border border-white/10"
+                            className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs sm:text-sm font-medium transition-colors border border-white/10"
                             onClick={(e) => e.stopPropagation()}
                           >
                             Read More

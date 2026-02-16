@@ -423,16 +423,16 @@ export default function AboutPage() {
       {/* Enhanced Timeline Section - Year beside line */}
       <section
         ref={timelineSectionRef}
-        className="px-6 py-32 bg-gradient-to-b from-white via-blue-50/60 to-white relative overflow-hidden"
+        className="px-6 py-20 md:py-32 bg-gradient-to-b from-white via-blue-50/60 to-white relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-blue-100/60 blur-[120px] opacity-80" />
 
         <div className="relative max-w-6xl mx-auto">
-          <div className="about-timeline-heading text-center mb-24">
+          <div className="about-timeline-heading text-center mb-16 md:mb-24">
             <div className="text-xs uppercase tracking-[0.35em] text-blue-700/70">
               Timeline
             </div>
-            <h2 className="mt-4 text-5xl md:text-6xl font-bold text-[#0A1A2F]">
+            <h2 className="mt-4 text-4xl md:text-6xl font-bold text-[#0A1A2F]">
               Our Journey
             </h2>
             <p className="mt-4 text-lg max-w-2xl mx-auto text-[#0A1A2F]/70">
@@ -441,10 +441,9 @@ export default function AboutPage() {
             <div className="mt-6 w-20 h-1.5 mx-auto rounded-full bg-gradient-to-r from-blue-600 to-blue-400" />
           </div>
 
-          {/* Timeline Container with Centered Progress Line */}
           <div className="relative max-w-4xl mx-auto">
-            {/* Animated Progress Line - Centered */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2">
+            {/* Progress Line - Desktop (Center) / Mobile (Left) */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 -translate-x-1/2">
               <div className="absolute inset-0 bg-gradient-to-b from-blue-200 via-blue-100 to-blue-200 rounded-full opacity-30" />
               <div
                 ref={progressLineRef}
@@ -452,48 +451,47 @@ export default function AboutPage() {
               />
             </div>
 
-            <div className="space-y-20">
+            <div className="space-y-12 md:space-y-20">
               {timeline.map((item, index) => (
                 <div key={item.year} className="timeline-item relative">
-                  {/* Year Circle on line */}
-                  <div className="absolute left-1/2 top-0 -translate-x-1/2 z-10">
+
+                  {/* Year Circle */}
+                  <div className="absolute left-8 md:left-1/2 top-0 -translate-x-1/2 z-10">
                     <div
-                      className="timeline-circle relative w-[100px] h-[100px] rounded-full flex items-center justify-center border-4 border-blue-600 bg-white shadow-[0_8px_32px_rgba(11,94,215,0.2)]"
+                      className="timeline-circle relative w-16 h-16 md:w-[100px] md:h-[100px] rounded-full flex items-center justify-center border-4 border-blue-600 bg-white shadow-[0_8px_32px_rgba(11,94,215,0.2)]"
                     >
                       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-transparent" />
-                      <span className="relative text-2xl font-bold text-[#0B5ED7]">
+                      <span className="relative text-sm md:text-2xl font-bold text-[#0B5ED7]">
                         {item.year}
                       </span>
                     </div>
                   </div>
 
-                  {/* Content Card - Alternating sides */}
-                  <div className="grid grid-cols-2 gap-8 items-center pt-2">
-                    <div className={index % 2 === 0 ? 'pr-16' : 'col-start-2 pl-16'}>
+                  {/* Content Card */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2 pl-20 md:pl-0">
+                    <div className={index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:col-start-2 md:pl-16 md:text-left'}>
                       <div
-                        className="timeline-card rounded-3xl bg-white px-10 py-8 border-2 border-blue-100 relative overflow-hidden shadow-[0_12px_48px_rgba(11,94,215,0.12)] [transform-style:preserve-3d]"
+                        className="timeline-card rounded-3xl bg-white p-6 md:px-10 md:py-8 border-2 border-blue-100 relative overflow-hidden shadow-[0_12px_48px_rgba(11,94,215,0.12)]"
                       >
                         {/* Card background gradient */}
                         <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-60" />
 
                         <div className="relative">
-                          <h3 className="text-3xl md:text-4xl font-bold mb-4 text-[#0A1A2F]">
+                          <h3 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 text-[#0A1A2F]">
                             {item.title}
                           </h3>
-                          <p className="text-lg leading-relaxed text-[#0A1A2F]/75">
+                          <p className="text-base md:text-lg leading-relaxed text-[#0A1A2F]/75">
                             {item.description}
                           </p>
-
-                          {/* Decorative line */}
-                          <div className="mt-6 h-1 w-16 rounded-full bg-gradient-to-r from-blue-600 to-blue-400" />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Connector Line between circles */}
+                  {/* Connector Line (Desktop Only logic if needed, but CSS handles it) */}
                   {index < timeline.length - 1 && (
-                    <div className="timeline-connector absolute left-1/2 -bottom-10 w-0.5 h-20 -translate-x-1/2 bg-gradient-to-b from-blue-400 to-transparent origin-top z-0" />
+                    // Only needed for visual spacing if items are far apart
+                    <div className="hidden md:block timeline-connector absolute left-1/2 -bottom-10 w-0.5 h-20 -translate-x-1/2 bg-gradient-to-b from-blue-400 to-transparent origin-top z-0" />
                   )}
                 </div>
               ))}
@@ -502,9 +500,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-white">
-        <Marquee />
-      </section>
+      
 
       <Footer />
     </main>

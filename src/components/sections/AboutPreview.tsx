@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const stats = [
   { value: 500, label: "Active Members", suffix: "+" },
@@ -45,80 +46,83 @@ const AboutPreview = () => {
   }, [isInView]);
 
   return (
-    <section ref={sectionRef} className="relative py-20 sm:py-24 px-6 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-sky/50 to-white" />
-      <div className="absolute -top-24 right-0 w-72 h-72 bg-royal/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] bg-sky/70 rounded-full blur-3xl" />
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
+    <section ref={sectionRef} className="relative pt-0 pb-14 sm:pt-8 sm:pb-24 lg:pt-12 lg:pb-32 overflow-hidden bg-white">
+      {/* Background Elements - Light Theme */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-sky-50/50" />
+      <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-200/20 rounded-full blur-[60px] md:blur-[100px]" />
+      <div className="absolute bottom-0 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-sky-200/20 rounded-full blur-[60px] md:blur-[100px]" />
+
+      {/* Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f61a_1px,transparent_1px),linear-gradient(to_bottom,#3b82f61a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-24 items-center">
+
+          {/* Left Column: Stats Cards */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-6"
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="grid gap-4 sm:gap-6"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-royal/10 text-royal text-xs font-semibold shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-royal" />
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                className={cn(
+                  "flex flex-col p-5 sm:p-8 rounded-2xl border border-blue-100 bg-white/60 backdrop-blur-md shadow-lg shadow-blue-500/5 hover:shadow-blue-500/10 transition-all duration-300",
+                  index === 1 ? "lg:translate-x-8 xl:translate-x-12" : ""
+                )}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 w-fit">
+                  {counts[index]}{stat.suffix}
+                </div>
+                <div className="mt-2 text-sm sm:text-base text-slate-600 font-medium">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Right Column: Content */}
+          <motion.div
+            className="space-y-6 sm:space-y-8"
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-700 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
               About IEEE KIIT
             </div>
-            <motion.h2
-              className="text-4xl md:text-5xl font-bold text-navy leading-tight tracking-tight"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Building leaders in <span className="text-gradient">technology</span>
-            </motion.h2>
-            <motion.p
-              className="text-base text-navy/70 leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              IEEE KIIT Student Branch is a vibrant community of technology
-              enthusiasts, innovators, and future leaders committed to advancing
-              technology for the betterment of humanity.
-            </motion.p>
-            <motion.p
-              className="text-base text-navy/70 leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            >
-              We foster innovation through technical workshops, research
-              collaborations, and hands-on projects that shape the next
-              generation of engineers.
-            </motion.p>
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-navy/70"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {[
-                "Industry-backed workshops",
-                "Hands-on research culture",
-                "Global IEEE community",
-                "Leadership & mentorship",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-royal/80" />
-                  <span className="text-sm font-medium">{item}</span>
-                </div>
-              ))}
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            >
+
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
+              Building leaders in <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">technology</span>
+            </h2>
+
+            <div className="space-y-4 sm:space-y-6 text-sm sm:text-lg text-slate-600 leading-relaxed">
+              <p>
+                IEEE KIIT Student Branch is a vibrant community of technology
+                enthusiasts, innovators, and future leaders committed to advancing
+                technology for the betterment of humanity.
+              </p>
+              <p>
+                We foster innovation through technical workshops, research
+                collaborations, and hands-on projects that shape the next
+                generation of engineers.
+              </p>
+            </div>
+
+            <div className="pt-4">
               <Link
                 href="/about"
-                className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-royal to-navy text-white text-sm font-semibold shadow-lg shadow-royal/20 hover:shadow-royal/30 transition-all"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all"
               >
                 Discover Our Story
                 <svg
-                  className="w-4 h-4"
+                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -132,43 +136,9 @@ const AboutPreview = () => {
                   />
                 </svg>
               </Link>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-royal/10 via-white to-sky/80 blur-2xl" />
-            <div className="relative grid gap-4">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  className={`relative rounded-3xl border border-royal/10 px-6 py-5 shadow-lg shadow-royal/10 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-royal/20 ${
-                    index === 0
-                      ? "bg-gradient-to-br from-white via-white to-sky/70"
-                      : "bg-white/80"
-                  }`}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 1, delay: 0.2 + index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <div className="flex items-end gap-2 mb-2">
-                    <span className="text-4xl md:text-5xl font-bold text-navy tracking-tight">
-                      {counts[index]}
-                    </span>
-                    <span className="text-2xl md:text-3xl font-bold text-royal">
-                      {stat.suffix}
-                    </span>
-                  </div>
-                  <p className="text-sm text-navy/60 font-medium">{stat.label}</p>
-                  <div className="mt-4 h-1 w-10 rounded-full bg-royal/60" />
-                </motion.div>
-              ))}
             </div>
           </motion.div>
+
         </div>
       </div>
     </section>
