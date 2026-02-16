@@ -29,7 +29,7 @@ export function EventsList() {
   return (
     <div>
       <h2>Events</h2>
-      
+
       {/* Display stats */}
       <div className="stats mb-6">
         <p>Total: {stats.total}</p>
@@ -91,7 +91,7 @@ export async function createNewEvent() {
 /**
  * Example: Update event
  */
-export async function updateExistingEvent(id: number) {
+export async function updateExistingEvent(id: string) {
   try {
     await eventAPI.updateEvent(id, {
       title: 'Updated Title',
@@ -105,7 +105,7 @@ export async function updateExistingEvent(id: number) {
 /**
  * Example: Delete event
  */
-export async function deleteExistingEvent(id: number) {
+export async function deleteExistingEvent(id: string) {
   try {
     await eventAPI.deleteEvent(id);
     console.log('Event deleted successfully');

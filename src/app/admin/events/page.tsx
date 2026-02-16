@@ -6,7 +6,7 @@ import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-mot
 import { formatDateTimeIST } from '@/utils/helpers';
 
 interface Event {
-    id: number;
+    id: string;
     title: string;
     image_url: string;
     description: string;
@@ -15,7 +15,7 @@ interface Event {
     status: 'UPCOMING' | 'LIVE' | 'PAST';
 }
 
-function EventCard({ event, index, onDelete }: { event: Event, index: number, onDelete: (id: number) => void }) {
+function EventCard({ event, index, onDelete }: { event: Event, index: number, onDelete: (id: string) => void }) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
@@ -147,7 +147,7 @@ export default function EventsPage() {
         }
     };
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this event?')) return;
         try {
             const token = localStorage.getItem('adminToken');

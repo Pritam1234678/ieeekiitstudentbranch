@@ -1,32 +1,62 @@
-import { executeQuery } from '../src/config/db';
-import fs from 'fs';
-import path from 'path';
+import { Society } from '../src/models/society';
+import { connectDB } from '../src/config/db';
 
 async function setupSocieties() {
-  const sqlPath = path.join(__dirname, '../database/societies.sql');
-  const sql = fs.readFileSync(sqlPath, 'utf8');
+  try {
+    await connectDB();
+    console.log('🔄 Setting up societies...');
 
-  // Split SQL commands by semicolon (simple split, might need improvement for complex SQL)
-  // Ignoring empty statements
-  const statements = sql
-    .split(';')
-    .map((stmt) => stmt.trim())
-    .filter((stmt) => stmt.length > 0);
+    // Clear existing societies
+    await Society.deleteMany({});
+    console.log('✅ Cleared existing societies');
 
-  console.log(`Found ${statements.length} SQL statements to execute.`);
+    // Create societies
+    const societies = [
+      {
+        name: 'IEEE Computer Society KIIT Student Branch Chapter',
+        logo_url: '/images/societies/cs.png',
+        chair_name: 'Priyajit Panth',
+        description: 'A student-led society focused on technical excellence in computer science and engineering.',
+        faculty_name: 'Dr. Ananya Paul'
+      },
+      {
+        name: 'IEEE Antennas & Propagation Society KIIT Student Branch Chapter',
+        logo_url: '/images/societies/aps.png',
+        chair_name: 'Ananya Paul',
+        description: 'A community centered around wireless communication, antenna design, and electromagnetic theory.',
+        faculty_name: 'Dr. Rajesh Kumar'
+      },
+      {
+        name: 'IEEE Industry Applications Society KIIT Student Branch Chapter',
+        logo_url: '/images/societies/ias.png',
+        chair_name: 'Rahul Sharma',
+        description: 'To be announced',
+        faculty_name: 'Dr. Priya Singh'
+      },
+      {
+        name: 'IEEE Instrumentation & Measurement Society KIIT Student Branch Chapter',
+        logo_url: '/images/societies/ims.png',
+        chair_name: 'Sneha Patel',
+        description: 'Focuses on precision measurement technologies and instrumentation systems.',
+        faculty_name: 'Dr. Amit Verma'
+      },
+      {
+        name: 'IEEE Computational Intelligence Society KIIT Student Branch Chapter',
+        logo_url: '/images/societies/cis.png',
+        chair_name: 'Vikram Reddy',
+        description: 'Explores AI, machine learning, and intelligent systems through hands-on projects and research.',
+        faculty_name: 'Dr. Kavita Joshi'
+      }
+    ];
 
-  for (const statement of statements) {
-    try {
-      await executeQuery(statement);
-      console.log('Executed SQL statement successfully.');
-    } catch (error) {
-      console.error('Error executing SQL statement:', error);
-      console.error('Statement:', statement);
-    }
+    await Society.insertMany(societies);
+    console.log(`✅ Created ${societies.length} societies`);
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error setting up societies:', error);
+    process.exit(1);
   }
-
-  console.log('Society setup completed.');
-  process.exit(0);
 }
 
 setupSocieties();

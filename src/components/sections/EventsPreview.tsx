@@ -1,52 +1,58 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useEvents } from "@/lib/api/hooks";
 import { EventStatus } from "@/lib/api/types";
-import { formatDateIST } from "@/utils/helpers";
 
 const EventsPreview = () => {
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   // Fetch events from backend API
   const { events: allEvents, loading, error } = useEvents();
 
-  // Get only past events
-  let events = allEvents
-    .filter(event => event.status === EventStatus.PAST);
+  // Get only past events, limit to 4 for the best accordion layout
+  const events = allEvents
+    .filter(event => event.status === EventStatus.PAST)
+    .slice(0, 4);
 
-  // Duplicate events if few to maintain carousel balance (Center, Left, Right)
-  if (events.length === 1) {
-    events = [...events, ...events, ...events]; // 1 -> 3
-  } else if (events.length === 2) {
-    events = [...events, ...events]; // 2 -> 4
-  }
+  // Set initial active event once loaded
+  useEffect(() => {
+    if (events.length > 0 && !activeId) {
+      setActiveId(events[0].id);
+    }
+  }, [events, activeId]);
 
   // Format date for display
   const formatDate = (dateString: string) => {
-    return formatDateIST(dateString);
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
-  useEffect(() => {
-    if (events.length > 0) {
-      const interval = setInterval(() => {
-        setActiveIndex((prev) => (prev + 1) % events.length);
-      }, 5000);
-      return () => clearInterval(interval);
+  // Generate deterministic gradient based on ID string
+  const getGradient = (id: string) => {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = id.charCodeAt(i) + ((hash << 5) - hash);
     }
-  }, [events.length]);
+    const hue1 = Math.abs(hash) % 360;
+    const hue2 = (hue1 + 40) % 360;
+    return `linear-gradient(135deg, hsl(${hue1}, 70%, 20%), hsl(${hue2}, 80%, 10%))`;
+  };
 
   // Loading state
   if (loading) {
     return (
-      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
-        <div className="text-center">
+      <section className="relative min-h-[80vh] bg-[#020617] py-20 overflow-hidden flex items-center justify-center">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-[#020617] to-[#020617]" />
+        <div className="text-center relative z-10">
           <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-blue-200 text-xl">Loading Events...</p>
+          <p className="text-blue-200/50 text-sm tracking-widest uppercase">Loading Archives...</p>
         </div>
       </section>
     );
@@ -55,217 +61,160 @@ const EventsPreview = () => {
   // Error state
   if (error) {
     return (
-      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-xl mb-4">Failed to load events</p>
-          <p className="text-blue-200">{error}</p>
-        </div>
+      <section className="relative min-h-[50vh] bg-[#020617] flex items-center justify-center">
+        <p className="text-red-400/50">Details unavailable</p>
       </section>
     );
   }
 
   // No events state
   if (events.length === 0) {
-    return (
-      <section className="relative min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 py-20 overflow-hidden flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-blue-200 text-xl">No past events found</p>
-          <Link
-            href="/events"
-            className="inline-block mt-4 text-blue-400 hover:text-blue-300 font-semibold"
-          >
-            View All Events
-          </Link>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
-    <section className="relative min-h-screen bg-[#030712] py-24 overflow-hidden flex flex-col justify-center">
-      {/* Dynamic Background Elements - Award Winning Tech Look */}
+    <section className="relative min-h-screen bg-[#020617] py-24 overflow-hidden flex flex-col justify-center">
+      {/* Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Deep, rich gradient base */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(17,24,39,1),_rgba(3,7,18,1))]" />
-
-        {/* Animated Cyber Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20" />
-
-        {/* Ambient Glows */}
-        <motion.div
-          animate={{ opacity: [0.4, 0.6, 0.4], scale: [1, 1.1, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full mix-blend-screen"
-        />
-        <motion.div
-          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.2, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/10 blur-[120px] rounded-full mix-blend-screen"
-        />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" />
       </div>
 
-      <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto px-4 w-full">
-        {/* Header - Premium Typography */}
-        <div className="text-center mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/50 mb-6 tracking-tight drop-shadow-2xl">
-              Past Events
+      <div className="relative z-10 container mx-auto px-4 max-w-7xl">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+        >
+          <div>
+            <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-4">
+              Past <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Events</span>
             </h2>
-            <div className="h-1 w-24 mx-auto bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-6" />
-            <p className="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
-              A showcase of our <span className="text-blue-400 font-medium">legacy</span> and <span className="text-purple-400 font-medium">impact</span> through technology.
+            <p className="text-blue-200/60 text-lg max-w-xl leading-relaxed">
+              Explore our history of innovation, workshops, and technical breakthroughs.
             </p>
-          </motion.div>
-        </div>
+          </div>
 
-        {/* Cards Container - Centered */}
-        <div className="relative h-[420px] flex items-center justify-center mb-16 perspective-1000">
-          {events.map((event, index) => {
-            let offset = index - activeIndex;
-            if (offset > events.length / 2) offset -= events.length;
-            if (offset < -events.length / 2) offset += events.length;
-
-            const isActive = offset === 0;
-            const isVisible = Math.abs(offset) <= 1; // Max 3 visible (Center + 1 each side)
-            const isHovered = hoveredIndex === index;
-
-            // Dynamic spacing based on count to fit within view
-            const baseSpacing = events.length > 3 ? 420 : 500;
-            const shift = offset * baseSpacing;
-
-            const scale = isActive ? 1 : 0.85;
-            const opacity = isVisible ? (isActive ? 1 : 0.4) : 0;
-            const zIndex = isActive ? 50 : 40 - Math.abs(offset);
-            const rotateY = offset * -15; // 3D rotation effect
-
-            return (
-              <motion.div
-                key={`${event.id}-${index}`}
-                className="absolute"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{
-                  x: shift,
-                  scale: scale,
-                  opacity: opacity,
-                  zIndex: zIndex,
-                  rotateY: rotateY,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 25,
-                }}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                style={{
-                  pointerEvents: isVisible ? "auto" : "none",
-                  transformStyle: "preserve-3d",
-                }}
-              >
-                <div
-                  className={`w-[360px] h-[380px] bg-[#0f172a]/80 backdrop-blur-xl rounded-[2rem] p-8 border transition-all duration-500 relative overflow-hidden group
-                    ${isActive
-                      ? "border-blue-500/30 shadow-[0_0_60px_-15px_rgba(59,130,246,0.5)]"
-                      : "border-white/5"
-                    } ${isHovered && isActive
-                      ? "!border-blue-400/50 shadow-[0_0_80px_-20px_rgba(59,130,246,0.8)] scale-[1.02]"
-                      : ""
-                    }`}
-                >
-                  {/* Glass Reflection */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-50 pointer-events-none" />
-
-                  {/* Glow Effect */}
-                  <div className={`absolute -inset-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl opacity-0 transition-opacity duration-500 ${isActive ? 'opacity-100' : ''}`} />
-
-                  {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col">
-                    {/* Status Badge and Date */}
-                    <div className="flex justify-between items-start mb-8">
-                      <span
-                        className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 border ${isActive
-                          ? "bg-blue-500/10 border-blue-500/50 text-blue-400"
-                          : "bg-slate-800/50 border-slate-700 text-slate-400"
-                          }`}
-                      >
-                        {event.status}
-                      </span>
-                      <span className="text-slate-400 text-xs font-medium tracking-wide">
-                        {formatDate(event.start_time)}
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-3xl font-bold text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors">
-                      {event.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-4">
-                      {event.description}
-                    </p>
-
-                    {/* Learn More - Only on Active */}
-                    <div className={`mt-auto pt-6 flex items-center text-sm font-semibold text-blue-400 transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                      <span>View Details</span>
-                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Dots Navigation - Premium Pills */}
-        <div className="flex justify-center gap-2 mb-12">
-          {events.map((event, index) => (
-            <button
-              key={`${event.id}-dot-${index}`}
-              onClick={() => setActiveIndex(index)}
-              className={`transition-all duration-500 h-1.5 rounded-full ${index === activeIndex
-                ? "w-16 bg-gradient-to-r from-blue-500 to-purple-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-                : "w-2 bg-slate-700 hover:bg-slate-600"
-                }`}
-              aria-label={`Go to event ${index + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* View All Link - Minimalist */}
-        <div className="text-center">
           <Link
             href="/events"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white font-medium transition-all duration-300 group hover:scale-105 backdrop-blur-md"
+            className="group flex items-center gap-3 text-white/80 hover:text-white transition-colors pb-2"
           >
-            <span>Explore All Events</span>
-            <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-              <svg
-                className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
+            <span className="text-sm font-medium tracking-widest uppercase">View Archive</span>
+            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-blue-500/50 group-hover:bg-blue-500/10 transition-all">
+              <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </span>
+            </div>
           </Link>
-        </div>
+        </motion.div>
+
+        {/* Interactive Gallery */}
+        <LayoutGroup>
+          <div className="flex flex-col md:flex-row gap-4 h-[600px] w-full">
+            {events.map((event, index) => {
+              const isActive = activeId === event.id;
+
+              return (
+                <motion.div
+                  key={event.id}
+                  layout
+                  onClick={() => setActiveId(event.id)}
+                  onMouseEnter={() => setActiveId(event.id)}
+                  className={`relative rounded-[32px] overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]
+                                        ${isActive ? 'flex-[3]' : 'flex-[0.5] opacity-60 hover:opacity-100 hover:flex-[0.8]'}
+                                    `}
+                >
+                  {/* Event Image / Gradient */}
+                  <div className="absolute inset-0 z-0">
+                    {event.image_url ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={event.image_url}
+                          alt={event.title}
+                          fill
+                          className="object-cover transition-transform duration-1000 ease-out"
+                          style={{ transform: isActive ? 'scale(1.05)' : 'scale(1.5)' }}
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                        <div className="absolute inset-0 bg-black/40" />
+                      </div>
+                    ) : (
+                      <div
+                        className="w-full h-full"
+                        style={{ background: getGradient(event.id) }}
+                      />
+                    )}
+                    {/* Cinematic overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/20 to-transparent transition-opacity duration-500 ${isActive ? 'opacity-90' : 'opacity-60'}`} />
+                  </div>
+
+                  {/* Content */}
+                  <div className="relative z-10 h-full flex flex-col justify-end p-8">
+                    {/* Index Number */}
+                    <div className={`absolute top-6 left-6 text-4xl font-bold tracking-tighter text-white/10 transition-all duration-500
+                                            ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}
+                                        `}>
+                      0{index + 1}
+                    </div>
+
+                    <motion.div layout="position" className="space-y-4">
+                      {/* Date Badge */}
+                      <div className={`flex items-center gap-3 transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                        <div className="h-[1px] w-8 bg-blue-500/50" />
+                        <span className="text-blue-300 font-mono text-xs tracking-widest uppercase">
+                          {formatDate(event.start_time)}
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className={`font-bold text-white leading-tight transition-all duration-500 origin-left whitespace-nowrap md:whitespace-normal
+                                                ${isActive ? 'text-4xl md:text-5xl mb-2 translate-x-0 rotate-0' : 'text-2xl md:-rotate-90 md:translate-x-[-50%] md:absolute md:bottom-24 md:left-8'}
+                                            `}>
+                        {event.title}
+                      </h3>
+
+                      {/* Expanded Details */}
+                      <div className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${isActive ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <p className="text-white/70 text-base md:text-lg mb-6 line-clamp-3 max-w-lg">
+                          {event.description}
+                        </p>
+                        {event.registration_link ? (
+                          <Link
+                            href={event.registration_link}
+                            target="_blank"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium transition-colors border border-white/10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            View Details
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </Link>
+                        ) : (
+                          <Link
+                            href={`/events/${event.id}`}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium transition-colors border border-white/10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Read More
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                          </Link>
+                        )}
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </LayoutGroup>
       </div>
     </section>
-
   );
 };
 

@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 
 interface AdminUser {
-    id: number;
+    id: string;
     name: string;
     email: string;
 }

@@ -1,64 +1,44 @@
-import { login } from '../src/services/authService';
-import { createSociety, deleteSociety, getSocieties, updateSociety } from '../src/services/societyService';
+import bcrypt from 'bcrypt';
+import { Admin } from '../src/models/admin';
+import { connectDB } from '../src/config/db';
 
-async function verifyAdminDashboard() {
+async function verifyAdmin() {
   try {
-    console.log('--- Verifying Authentication ---');
-    const token = await login('ieeekiitstudentbaranch@gmail.com', 'Mandalp166#');
-    if (token) {
-      console.log('Login successful! Token received.');
-    } else {
-      console.error('Login failed.');
+    await connectDB();
+    console.log('🔍 Verifying admin credentials...\n');
+
+    const email = 'ieeekiitstudentbranch@gmail.com';
+    const password = 'Mandalp166#';
+
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      console.log('❌ Admin not found with email:', email);
       process.exit(1);
     }
 
-    console.log('\n--- Verifying Society CRUD ---');
-    
-    // Create
-    console.log('Creating new society...');
-    const newSociety = await createSociety({
-      name: 'Test Society',
-      logo_url: '/test.png',
-      chair_name: 'Test Chair',
-      description: 'Test Description',
-      faculty_name: 'Test Faculty'
-    });
-    console.log('Society created with ID:', newSociety.id);
+    console.log('✅ Admin found:');
+    console.log('   Name:', admin.name);
+    console.log('   Email:', admin.email);
+    console.log('   Phone:', admin.phone_no || 'N/A');
 
-    // Read
-    const societies = await getSocieties();
-    const createdSociety = societies.find(s => s.id === newSociety.id);
-    if (createdSociety) {
-      console.log('Society found in list:', createdSociety.name);
+    const isPasswordValid = await bcrypt.compare(password, admin.password_hash);
+
+    if (isPasswordValid) {
+      console.log('\n✅ Password is CORRECT!');
+      console.log('   You can login with:');
+      console.log('   Email:', email);
+      console.log('   Password:', password);
     } else {
-      console.error('Society not found in list.');
+      console.log('\n❌ Password is INCORRECT!');
+      console.log('   The password you provided does not match.');
     }
 
-    // Update
-    console.log('Updating society...');
-    const updateResult = await updateSociety(newSociety.id, { name: 'Updated Test Society' });
-    if (updateResult) {
-      console.log('Society updated successfully.');
-    } else {
-      console.error('Society update failed.');
-    }
-
-    // Delete
-    console.log('Deleting society...');
-    const deleteResult = await deleteSociety(newSociety.id);
-    if (deleteResult) {
-      console.log('Society deleted successfully.');
-    } else {
-      console.error('Society delete failed.');
-    }
-
-    console.log('\n--- Verification Completed ---');
-
-  } catch (error) {
-    console.error('Verification failed with error:', error);
-  } finally {
     process.exit(0);
+  } catch (error) {
+    console.error('❌ Error:', error);
+    process.exit(1);
   }
 }
 
-verifyAdminDashboard();
+verifyAdmin();

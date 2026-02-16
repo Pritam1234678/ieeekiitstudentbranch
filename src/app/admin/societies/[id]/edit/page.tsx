@@ -34,6 +34,7 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
         try {
             const res = await fetch(`http://localhost:5000/api/societies/${societyId}`);
             const data = await res.json();
+
             if (data.success) {
                 setFormData({
                     ...data.data,
@@ -125,8 +126,8 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
                                 value={formData.name}
                                 onChange={handleChange}
                                 className={`peer w-full bg-transparent border-b-2 py-3 text-[#0A1A2F] outline-none transition-colors duration-300 placeholder-transparent ${errors.find(e => e.field === 'name')
-                                        ? 'border-red-500 focus:border-red-500'
-                                        : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
+                                    ? 'border-red-500 focus:border-red-500'
+                                    : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
                                     }`}
                                 placeholder=" "
                                 required
@@ -134,8 +135,8 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
                             <label
                                 htmlFor="name"
                                 className={`absolute left-0 -top-3.5 text-xs font-medium transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal peer-focus:-top-3.5 peer-focus:text-xs peer-focus:font-medium ${errors.find(e => e.field === 'name')
-                                        ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
-                                        : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
+                                    ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
+                                    : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
                                     }`}
                             >
                                 Society Name
@@ -156,16 +157,16 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
                                 value={formData.chair_name || ''}
                                 onChange={handleChange}
                                 className={`peer w-full bg-transparent border-b-2 py-3 text-[#0A1A2F] outline-none transition-colors duration-300 placeholder-transparent ${errors.find(e => e.field === 'chair_name')
-                                        ? 'border-red-500 focus:border-red-500'
-                                        : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
+                                    ? 'border-red-500 focus:border-red-500'
+                                    : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
                                     }`}
                                 placeholder=" "
                             />
                             <label
                                 htmlFor="chair_name"
                                 className={`absolute left-0 -top-3.5 text-xs font-medium transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal peer-focus:-top-3.5 peer-focus:text-xs peer-focus:font-medium ${errors.find(e => e.field === 'chair_name')
-                                        ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
-                                        : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
+                                    ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
+                                    : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
                                     }`}
                             >
                                 Chairperson Name
@@ -187,16 +188,16 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
                             value={formData.logo_url || ''}
                             onChange={handleChange}
                             className={`peer w-full bg-transparent border-b-2 py-3 text-[#0A1A2F] outline-none transition-colors duration-300 placeholder-transparent ${errors.find(e => e.field === 'logo_url')
-                                    ? 'border-red-500 focus:border-red-500'
-                                    : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
+                                ? 'border-red-500 focus:border-red-500'
+                                : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
                                 }`}
                             placeholder=" "
                         />
                         <label
                             htmlFor="logo_url"
                             className={`absolute left-0 -top-3.5 text-xs font-medium transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal peer-focus:-top-3.5 peer-focus:text-xs peer-focus:font-medium ${errors.find(e => e.field === 'logo_url')
-                                    ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
-                                    : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
+                                ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
+                                : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
                                 }`}
                         >
                             Logo URL
@@ -217,16 +218,16 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
                             onChange={handleChange}
                             rows={4}
                             className={`peer w-full bg-transparent border-b-2 py-3 text-[#0A1A2F] outline-none transition-colors duration-300 placeholder-transparent resize-none ${errors.find(e => e.field === 'description')
-                                    ? 'border-red-500 focus:border-red-500'
-                                    : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
+                                ? 'border-red-500 focus:border-red-500'
+                                : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
                                 }`}
                             placeholder=" "
                         />
                         <label
                             htmlFor="description"
                             className={`absolute left-0 -top-3.5 text-xs font-medium transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal peer-focus:-top-3.5 peer-focus:text-xs peer-focus:font-medium ${errors.find(e => e.field === 'description')
-                                    ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
-                                    : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
+                                ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
+                                : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
                                 }`}
                         >
                             Description
@@ -247,16 +248,16 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
                             value={formData.faculty_name || ''}
                             onChange={handleChange}
                             className={`peer w-full bg-transparent border-b-2 py-3 text-[#0A1A2F] outline-none transition-colors duration-300 placeholder-transparent ${errors.find(e => e.field === 'faculty_name')
-                                    ? 'border-red-500 focus:border-red-500'
-                                    : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
+                                ? 'border-red-500 focus:border-red-500'
+                                : 'border-[#D4E4F7] focus:border-[#0B5ED7]'
                                 }`}
                             placeholder=" "
                         />
                         <label
                             htmlFor="faculty_name"
                             className={`absolute left-0 -top-3.5 text-xs font-medium transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#94A3B8] peer-placeholder-shown:font-normal peer-focus:-top-3.5 peer-focus:text-xs peer-focus:font-medium ${errors.find(e => e.field === 'faculty_name')
-                                    ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
-                                    : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
+                                ? 'text-red-500 peer-placeholder-shown:text-red-400 peer-focus:text-red-500'
+                                : 'text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]'
                                 }`}
                         >
                             Faculty Name

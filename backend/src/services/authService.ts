@@ -1,34 +1,36 @@
-import { executeQuery } from '../config/db';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-interface Admin {
-  id: number;
-  name: string;
-  email: string;
-  password_hash: string;
-}
+import { Admin } from '../models/admin';
 
 export async function login(email: string, password: string): Promise<string | null> {
-  const query = 'SELECT * FROM admins WHERE email = ?';
-  const admins = await executeQuery<Admin[]>(query, [email]);
-
-  if (admins.length === 0) {
+  console.log('🔐 AuthService - login attempt for:', email);
+  
+  const admin = await Admin.findOne({ email });
+  
+  if (!admin) {
+    console.log('❌ Admin not found');
     return null;
   }
 
-  const admin = admins[0];
-  const passwordMatch = await bcrypt.compare(password, admin.password_hash);
-
-  if (!passwordMatch) {
+  const isValid = await bcrypt.compare(password, admin.password_hash);
+  
+  if (!isValid) {
+    console.log('❌ Invalid password');
     return null;
   }
 
+  // Read JWT_SECRET here, not at module level, to ensure dotenv has loaded
+  const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+  
+  console.log('✅ Password valid, generating token...');
+  console.log('   JWT_SECRET:', JWT_SECRET ? 'SET (' + JWT_SECRET.substring(0, 20) + '...)' : 'NOT SET');
+  
   const token = jwt.sign(
-    { id: admin.id, email: admin.email, name: admin.name },
-    process.env.JWT_SECRET || 'your_super_secret_key',
-    { expiresIn: '24h' }
+    { id: admin._id.toString(), email: admin.email, name: admin.name },
+    JWT_SECRET,
+    { expiresIn: '7d' }
   );
 
+  console.log('✅ Token generated:', token.substring(0, 50) + '...');
   return token;
 }

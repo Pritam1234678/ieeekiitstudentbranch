@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
 
 interface Society {
-    id: number;
+    id: string;
     name: string;
     logo_url: string;
     chair_name: string;
@@ -13,7 +13,7 @@ interface Society {
     faculty_name: string;
 }
 
-function SocietyCard({ society, index, onDelete }: { society: Society, index: number, onDelete: (id: number) => void }) {
+function SocietyCard({ society, index, onDelete }: { society: Society, index: number, onDelete: (id: string) => void }) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
@@ -130,7 +130,7 @@ export default function SocietiesPage() {
         }
     };
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this society?')) return;
         try {
             const token = localStorage.getItem('adminToken');
@@ -195,7 +195,7 @@ export default function SocietiesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {societies.map((society, index) => (
                     <SocietyCard
-                        key={society.id}
+                        key={`society-${society.id}-${index}`}
                         society={society}
                         index={index}
                         onDelete={handleDelete}

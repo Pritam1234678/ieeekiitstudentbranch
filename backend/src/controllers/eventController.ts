@@ -53,9 +53,9 @@ export async function getAllEvents(req: Request, res: Response) {
 
 export async function getEventById(req: Request, res: Response) {
   try {
-    const eventId = parseInt(req.params.id);
+    const eventId = req.params.id;
 
-    if (isNaN(eventId)) {
+    if (!eventId || eventId.length !== 24) {
       return res.status(400).json({
         success: false,
         error: 'Invalid event ID',
@@ -114,9 +114,9 @@ export async function createEvent(req: Request, res: Response) {
 
 export async function updateEvent(req: Request, res: Response) {
   try {
-    const eventId = parseInt(req.params.id);
+    const eventId = req.params.id;
 
-    if (isNaN(eventId)) {
+    if (!eventId || eventId.length !== 24) {
       return res.status(400).json({
         success: false,
         error: 'Invalid event ID',
@@ -156,9 +156,9 @@ export async function updateEvent(req: Request, res: Response) {
 
 export async function deleteEvent(req: Request, res: Response) {
   try {
-    const eventId = parseInt(req.params.id);
+    const eventId = req.params.id;
 
-    if (isNaN(eventId)) {
+    if (!eventId || eventId.length !== 24) {
       return res.status(400).json({
         success: false,
         error: 'Invalid event ID',

@@ -25,7 +25,7 @@ html.lenis {
 }
 
 .lenis.lenis-smooth {
-  scroll-behavior: auto;
+  scroll-behavior: auto !important;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
@@ -73,6 +73,20 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--navy);
+}
+
+/* Firefox Scrollbar Support */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--royal) transparent;
+}
+
+/* Hide unwanted loading bars */
+#nprogress {
+  display: none !important;
+}
+.nprogress-bar {
+  display: none !important;
 }
 
 /* Selection */

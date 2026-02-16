@@ -44,7 +44,7 @@ class EventAPI {
   /**
    * Fetch a single event by ID
    */
-  async getEventById(id: number): Promise<EventWithStatus | null> {
+  async getEventById(id: string): Promise<EventWithStatus | null> {
     const response = await fetch(`${this.baseUrl}/api/events/${id}`);
 
     if (!response.ok) {
@@ -59,7 +59,7 @@ class EventAPI {
   /**
    * Create a new event
    */
-  async createEvent(eventData: CreateEventDTO): Promise<number> {
+  async createEvent(eventData: CreateEventDTO): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/events`, {
       method: 'POST',
       headers: {
@@ -73,14 +73,14 @@ class EventAPI {
       throw new Error(error.error || 'Failed to create event');
     }
 
-    const data: ApiResponse<{ id: number }> = await response.json();
-    return data.data?.id || 0;
+    const data: ApiResponse<{ id: string }> = await response.json();
+    return data.data?.id || '';
   }
 
   /**
    * Update an existing event
    */
-  async updateEvent(id: number, eventData: UpdateEventDTO): Promise<boolean> {
+  async updateEvent(id: string, eventData: UpdateEventDTO): Promise<boolean> {
     const response = await fetch(`${this.baseUrl}/api/events/${id}`, {
       method: 'PUT',
       headers: {
@@ -100,7 +100,7 @@ class EventAPI {
   /**
    * Delete an event
    */
-  async deleteEvent(id: number): Promise<boolean> {
+  async deleteEvent(id: string): Promise<boolean> {
     const response = await fetch(`${this.baseUrl}/api/events/${id}`, {
       method: 'DELETE',
     });

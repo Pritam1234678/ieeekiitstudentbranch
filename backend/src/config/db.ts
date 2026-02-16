@@ -1,58 +1,27 @@
-import mysql from 'mysql2/promise';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '3306'),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'ieee_events',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
-};
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ieee_events';
 
-const pool = mysql.createPool(dbConfig);
-
-export async function getConnection() {
+export async function connectDB() {
   try {
-    return await pool.getConnection();
+    await mongoose.connect(MONGO_URI);
+    console.log('✅ MongoDB connected successfully');
   } catch (error) {
-    console.error('Database connection error:', error);
-    throw new Error('Failed to connect to database');
-  }
-}
-
-export async function executeQuery<T>(
-  query: string,
-  params: any[] = []
-): Promise<T> {
-  const connection = await getConnection();
-  try {
-    const [results] = await connection.query(query, params);
-    return results as T;
-  } catch (error) {
-    console.error('Query execution error:', error);
-    throw error;
-  } finally {
-    connection.release();
+    console.error('❌ MongoDB connection error:', error);
+    process.exit(1);
   }
 }
 
 export async function checkDatabaseHealth(): Promise<boolean> {
   try {
-    const connection = await getConnection();
-    await connection.ping();
-    connection.release();
-    return true;
+    return mongoose.connection.readyState === 1;
   } catch (error) {
     console.error('Database health check failed:', error);
     return false;
   }
 }
 
-export default pool;
+export default mongoose;

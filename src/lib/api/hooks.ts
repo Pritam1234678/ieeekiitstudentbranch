@@ -36,7 +36,7 @@ export function useEvents(status?: EventStatus) {
 /**
  * React hook to fetch a single event by ID
  */
-export function useEvent(id: number) {
+export function useEvent(id: string) {
   const [event, setEvent] = useState<EventWithStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

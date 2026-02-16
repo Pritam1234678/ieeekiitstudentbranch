@@ -1,97 +1,49 @@
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
-import { executeQuery } from '../config/db';
 import {
-  EventWithStatus,
+  Event,
   EventStatus,
   CreateEventDTO,
   UpdateEventDTO,
   EventStats,
+  IEvent
 } from '../models/event';
 
 export async function getEvents(
   status?: EventStatus,
   limit: number = 100,
   offset: number = 0
-): Promise<EventWithStatus[]> {
-  let query = `
-    SELECT 
-      id,
-      title,
-      image_url,
-      description,
-      start_time,
-      end_time,
-      created_at,
-      updated_at,
-      CASE 
-        WHEN NOW() < start_time THEN 'UPCOMING'
-        WHEN NOW() BETWEEN start_time AND end_time THEN 'LIVE'
-        WHEN NOW() > end_time THEN 'PAST'
-      END as status
-    FROM events
-  `;
+): Promise<IEvent[]> {
+  const now = new Date();
+  let query: any = {};
 
   if (status) {
     switch (status) {
       case EventStatus.UPCOMING:
-        query += ' WHERE NOW() < start_time';
+        query.start_time = { $gt: now };
         break;
       case EventStatus.LIVE:
-        query += ' WHERE NOW() BETWEEN start_time AND end_time';
+        query.start_time = { $lte: now };
+        query.end_time = { $gte: now };
         break;
       case EventStatus.PAST:
-        query += ' WHERE NOW() > end_time';
+        query.end_time = { $lt: now };
         break;
     }
   }
 
-  query += `
-    ORDER BY 
-      CASE 
-        WHEN NOW() BETWEEN start_time AND end_time THEN 1
-        WHEN NOW() < start_time THEN 2
-        WHEN NOW() > end_time THEN 3
-      END,
-      start_time ASC
-    LIMIT ? OFFSET ?
-  `;
+  const events = await Event.find(query)
+    .sort({ start_time: 1 })
+    .limit(limit)
+    .skip(offset);
 
-  const params = [limit, offset];
-
-  const results = await executeQuery<RowDataPacket[]>(query, params);
-  return results as EventWithStatus[];
+  return events as IEvent[];
 }
 
-export async function getEventById(id: number): Promise<EventWithStatus | null> {
-  const query = `
-    SELECT 
-      id,
-      title,
-      image_url,
-      description,
-      start_time,
-      end_time,
-      created_at,
-      updated_at,
-      CASE 
-        WHEN NOW() < start_time THEN 'UPCOMING'
-        WHEN NOW() BETWEEN start_time AND end_time THEN 'LIVE'
-        WHEN NOW() > end_time THEN 'PAST'
-      END as status
-    FROM events
-    WHERE id = ?
-  `;
-
-  const results = await executeQuery<RowDataPacket[]>(query, [id]);
-  
-  if (results.length === 0) {
-    return null;
-  }
-
-  return results[0] as EventWithStatus;
+export async function getEventById(id: string): Promise<IEvent | null> {
+  const event = await Event.findById(id);
+  return event as IEvent | null;
 }
 
-export async function createEvent(eventData: CreateEventDTO): Promise<number> {
+export async function createEvent(eventData: CreateEventDTO): Promise<string> {
   const startTime = new Date(eventData.start_time);
   const endTime = new Date(eventData.end_time);
 
@@ -99,56 +51,31 @@ export async function createEvent(eventData: CreateEventDTO): Promise<number> {
     throw new Error('End time must be after start time');
   }
 
-  const query = `
-    INSERT INTO events (title, image_url, description, start_time, end_time)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  const event = new Event({
+    title: eventData.title,
+    image_url: eventData.image_url || undefined,
+    description: eventData.description || undefined,
+    start_time: startTime,
+    end_time: endTime,
+  });
 
-  const params = [
-    eventData.title,
-    eventData.image_url || null,
-    eventData.description || null,
-    startTime,
-    endTime,
-  ];
-
-  const result = await executeQuery<ResultSetHeader>(query, params);
-  return result.insertId;
+  const savedEvent = await event.save();
+  return savedEvent._id.toString();
 }
 
 export async function updateEvent(
-  id: number,
+  id: string,
   eventData: UpdateEventDTO
 ): Promise<boolean> {
-  const updates: string[] = [];
-  const params: any[] = [];
+  const updates: any = {};
 
-  if (eventData.title !== undefined) {
-    updates.push('title = ?');
-    params.push(eventData.title);
-  }
+  if (eventData.title !== undefined) updates.title = eventData.title;
+  if (eventData.image_url !== undefined) updates.image_url = eventData.image_url;
+  if (eventData.description !== undefined) updates.description = eventData.description;
+  if (eventData.start_time !== undefined) updates.start_time = new Date(eventData.start_time);
+  if (eventData.end_time !== undefined) updates.end_time = new Date(eventData.end_time);
 
-  if (eventData.image_url !== undefined) {
-    updates.push('image_url = ?');
-    params.push(eventData.image_url);
-  }
-
-  if (eventData.description !== undefined) {
-    updates.push('description = ?');
-    params.push(eventData.description);
-  }
-
-  if (eventData.start_time !== undefined) {
-    updates.push('start_time = ?');
-    params.push(new Date(eventData.start_time));
-  }
-
-  if (eventData.end_time !== undefined) {
-    updates.push('end_time = ?');
-    params.push(new Date(eventData.end_time));
-  }
-
-  if (updates.length === 0) {
+  if (Object.keys(updates).length === 0) {
     throw new Error('No fields to update');
   }
 
@@ -160,41 +87,29 @@ export async function updateEvent(
     }
   }
 
-  params.push(id);
-
-  const query = `
-    UPDATE events 
-    SET ${updates.join(', ')}
-    WHERE id = ?
-  `;
-
-  const result = await executeQuery<ResultSetHeader>(query, params);
-  return result.affectedRows > 0;
+  const result = await Event.findByIdAndUpdate(id, updates, { new: true });
+  return result !== null;
 }
 
-export async function deleteEvent(id: number): Promise<boolean> {
-  const query = 'DELETE FROM events WHERE id = ?';
-  const result = await executeQuery<ResultSetHeader>(query, [id]);
-  return result.affectedRows > 0;
+export async function deleteEvent(id: string): Promise<boolean> {
+  const result = await Event.findByIdAndDelete(id);
+  return result !== null;
 }
 
 export async function getEventStats(): Promise<EventStats> {
-  const query = `
-    SELECT 
-      COUNT(*) as total,
-      SUM(CASE WHEN NOW() < start_time THEN 1 ELSE 0 END) as upcoming,
-      SUM(CASE WHEN NOW() BETWEEN start_time AND end_time THEN 1 ELSE 0 END) as live,
-      SUM(CASE WHEN NOW() > end_time THEN 1 ELSE 0 END) as past
-    FROM events
-  `;
+  const now = new Date();
 
-  const results = await executeQuery<RowDataPacket[]>(query, []);
-  const stats = results[0];
+  const [total, upcoming, live, past] = await Promise.all([
+    Event.countDocuments(),
+    Event.countDocuments({ start_time: { $gt: now } }),
+    Event.countDocuments({ start_time: { $lte: now }, end_time: { $gte: now } }),
+    Event.countDocuments({ end_time: { $lt: now } })
+  ]);
 
   return {
-    total: Number(stats.total) || 0,
-    upcoming: Number(stats.upcoming) || 0,
-    live: Number(stats.live) || 0,
-    past: Number(stats.past) || 0,
+    total,
+    upcoming,
+    live,
+    past
   };
 }

@@ -1,5 +1,5 @@
 export interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
   start_time: string;
@@ -11,6 +11,8 @@ export interface Event {
   updated_at?: string;
   status?: EventStatus;
 }
+
+export type IEvent = Event;
 
 export enum EventStatus {
   UPCOMING = 'UPCOMING',
@@ -43,7 +45,7 @@ export interface EventStats {
 }
 
 export interface Society {
-  id: number;
+  id: string;
   name: string;
   logo_url: string;
   chair_name: string;
@@ -56,9 +58,8 @@ export interface ApiResponse<T> {
   data: T;
   error?: string;
   pagination?: {
-    page: number;
     limit: number;
-    total: number;
-    pages: number;
+    offset: number;
+    count: number;
   };
 }

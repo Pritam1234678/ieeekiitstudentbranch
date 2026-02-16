@@ -76,6 +76,8 @@ export default function AdminLogin() {
         setError('');
         setIsLoading(true);
 
+        console.log('🔐 Login attempt:', { email, password: '***' });
+
         try {
             const res = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
@@ -85,24 +87,33 @@ export default function AdminLogin() {
                 body: JSON.stringify({ email, password }),
             });
 
+            console.log('📡 Response status:', res.status);
             const data = await res.json();
+            console.log('📦 Response data:', data);
 
             if (data.success) {
+                console.log('✅ Login successful, saving token...');
                 localStorage.setItem('adminToken', data.token);
+                console.log('💾 Token saved to localStorage');
                 // Success Animation
                 gsap.to(formRef.current, {
                     scale: 0.95,
                     opacity: 0,
                     duration: 0.5,
                     ease: "power2.in",
-                    onComplete: () => router.push('/admin/societies')
+                    onComplete: () => {
+                        console.log('🚀 Redirecting to /admin/societies');
+                        router.push('/admin/societies');
+                    }
                 });
             } else {
+                console.log('❌ Login failed:', data.error);
                 setError(data.error || 'Login failed');
                 // Shake animation on error
                 gsap.fromTo(formRef.current, { x: -10 }, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
             }
         } catch (err) {
+            console.error('💥 Login error:', err);
             setError('An error occurred. Please try again.');
         } finally {
             setIsLoading(false);

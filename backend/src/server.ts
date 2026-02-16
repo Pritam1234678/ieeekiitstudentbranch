@@ -4,9 +4,12 @@ import dotenv from 'dotenv';
 import eventRoutes from './routes/eventRoutes';
 import societyRoutes from './routes/societyRoutes';
 import authRoutes from './routes/authRoutes';
-import { checkDatabaseHealth } from './config/db';
+import { connectDB, checkDatabaseHealth } from './config/db';
 
 dotenv.config();
+
+// Connect to MongoDB
+connectDB();
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
