@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:3000', // Explicitly allow localhost:3000 (even if FRONTEND_URL is set)
     'http://localhost:3001',
     'https://www.ieeestudentbranchkiit.in', // Production Domain (www)
     'https://ieeestudentbranchkiit.in',     // Production Domain (no-www)
