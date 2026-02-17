@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { validateSociety, ValidationError } from '@/utils/validation';
+import { getApiUrl } from '@/lib/api/config';
 
 export default function CreateSociety() {
     const router = useRouter();
@@ -34,14 +35,13 @@ export default function CreateSociety() {
         }
 
         try {
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch('http://localhost:5000/api/societies', {
+            const res = await fetch(getApiUrl('/api/societies'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(formData),
+                credentials: 'include'
             });
 
             if (res.ok) {

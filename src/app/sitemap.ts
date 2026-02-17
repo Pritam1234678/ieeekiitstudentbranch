@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
     },
     {
-      url: `${baseUrl}/socity`,
+      url: `${baseUrl}/societies`,
       lastModified,
     },
     {

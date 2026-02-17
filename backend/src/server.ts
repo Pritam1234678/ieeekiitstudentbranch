@@ -7,6 +7,7 @@ import eventRoutes from './routes/eventRoutes';
 import societyRoutes from './routes/societyRoutes';
 import authRoutes from './routes/authRoutes';
 import { connectDB, checkDatabaseHealth } from './config/db';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -16,8 +17,15 @@ connectDB();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
+// Check for essential environment variables
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
+  process.exit(1);
+}
+
 // Middleware
-app.set('trust proxy', 1); // Trust first proxy (Railway Load Balancer)
+// Trust proxy headers in hosted environments so req.ip reflects real client IP.
+app.set('trust proxy', true);
 
 app.use(helmet()); // Security headers
 
@@ -44,6 +52,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Health check
 app.get('/health', async (req: Request, res: Response) => {
@@ -55,32 +64,12 @@ app.get('/health', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/version', (req: Request, res: Response) => {  res.json({ version: '1.0.1' }); });
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Strict limit: 5 login attempts per IP
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: 'Too many login attempts, please try again after 15 minutes',
-});
-
-const botBlocker = (req: Request, res: Response, next: any) => {
-  const userAgent = req.get('User-Agent') || '';
-  // console.log(`[BOT CHECK] UA: ${userAgent} | IP: ${req.ip}`);
-  
-  if (/curl|wget|python|postman|insomnia/i.test(userAgent)) {
-    console.log(`[BLOCK] Blocked Bot: ${userAgent}`);
-    return res.status(403).json({ success: false, error: 'Bots not allowed' });
-  }
-  next();
-};
+app.get('/version', (req: Request, res: Response) => {  res.json({ version: '1.0.2' }); });
 
 // Routes
 app.use('/api/events', eventRoutes);
 app.use('/api/societies', societyRoutes);
-// Apply strict limits and bot blocking
-app.use('/api/auth', authLimiter, botBlocker, authRoutes);
+app.use('/api/auth', authRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

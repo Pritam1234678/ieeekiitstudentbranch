@@ -5,11 +5,18 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
+import { getApiUrl } from '@/lib/api/config';
 
 interface AdminUser {
     id: string;
     name: string;
     email: string;
+}
+
+interface AuthMeResponse {
+    success?: boolean;
+    user?: AdminUser;
+    error?: string;
 }
 
 export default function AdminLayout({
@@ -30,33 +37,40 @@ export default function AdminLayout({
         }
 
         const checkAuth = async () => {
-            const token = localStorage.getItem('adminToken');
-            if (!token) {
-                router.push('/admin/login');
-                return;
-            }
-
             try {
-                const res = await fetch('http://localhost:5000/api/auth/me', {
+                // Use relative path or imported helper if available (assuming proxy or CORS setup handles it)
+                // Since this runs in client, we need full URL if on different port, but getApiUrl is safer.
+                // WE MUST IMPORT getApiUrl
+                const res = await fetch(getApiUrl('/api/auth/me'), {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
                 });
-                const data = await res.json();
+                const rawResponse = await res.text();
+                let data: AuthMeResponse = {};
 
-                if (data.success) {
+                if (rawResponse) {
+                    try {
+                        data = JSON.parse(rawResponse) as AuthMeResponse;
+                    } catch {
+                        data = { error: rawResponse };
+                    }
+                }
+
+                if (res.ok && data.success && data.user) {
                     setAuthorized(true);
                     setUser(data.user);
                 } else {
-                    localStorage.removeItem('adminToken');
-                    router.push('/admin/login');
+                    setAuthorized(false);
+                    setUser(null);
+                    router.replace('/admin/login');
                 }
             } catch (error) {
                 console.error('Auth check failed', error);
-                // Optionally allow them to stay on page if it's just a network error, 
-                // but safer to redirect or show error. For now, strict:
-                localStorage.removeItem('adminToken');
-                router.push('/admin/login');
+                setAuthorized(false);
+                setUser(null);
+                router.replace('/admin/login');
             }
         };
 
@@ -205,8 +219,10 @@ export default function AdminLayout({
                     )}
 
                     <button
-                        onClick={() => {
-                            localStorage.removeItem('adminToken');
+                        onClick={async () => {
+                            try {
+                                await fetch(getApiUrl('/api/auth/logout'), { method: 'POST', credentials: 'include' });
+                            } catch (e) { console.error(e); }
                             router.push('/admin/login');
                             setAuthorized(false);
                             setUser(null);

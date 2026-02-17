@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
 import { formatDateTimeIST } from '@/utils/helpers';
+import { getApiUrl } from '@/lib/api/config';
 
 interface Event {
     id: string;
@@ -135,7 +136,7 @@ export default function EventsPage() {
 
     const fetchEvents = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/events');
+            const res = await fetch(getApiUrl('/api/events'), { credentials: 'include' });
             const data = await res.json();
             if (data.success) {
                 setEvents(data.data);
@@ -150,10 +151,9 @@ export default function EventsPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this event?')) return;
         try {
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+            const res = await fetch(getApiUrl(`/api/events/${id}`), {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+                credentials: 'include'
             });
             if (res.ok) {
                 setEvents(events.filter(event => event.id !== id));

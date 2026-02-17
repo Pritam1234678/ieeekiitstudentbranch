@@ -4,9 +4,9 @@ export interface Event {
   description: string;
   start_time: string;
   end_time?: string;
-  location: string;
-  image_url: string;
-  registration_link: string;
+  location?: string;
+  image_url?: string;
+  registration_link?: string;
   created_at?: string;
   updated_at?: string;
   status?: EventStatus;

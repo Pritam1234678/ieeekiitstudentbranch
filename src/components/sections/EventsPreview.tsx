@@ -135,8 +135,8 @@ const EventsPreview = () => {
                   className={`relative rounded-[32px] overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]
                                         min-h-[140px] sm:min-h-[180px] md:min-h-0
                                         ${isActive
-                                          ? 'opacity-100 min-h-[280px] sm:min-h-[340px] md:min-h-0 md:flex-[3]'
-                                          : 'opacity-90 md:opacity-60 md:flex-[0.5] hover:opacity-100 md:hover:flex-[0.8]'}
+                      ? 'opacity-100 min-h-[280px] sm:min-h-[340px] md:min-h-0 md:flex-[3]'
+                      : 'opacity-90 md:opacity-60 md:flex-[0.5] hover:opacity-100 md:hover:flex-[0.8]'}
                                     `}
                 >
                   {/* Event Image / Gradient */}
@@ -207,7 +207,7 @@ const EventsPreview = () => {
                           </Link>
                         ) : (
                           <Link
-                            href={`/events/${event.id}`}
+                            href="/events"
                             className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs sm:text-sm font-medium transition-colors border border-white/10"
                             onClick={(e) => e.stopPropagation()}
                           >

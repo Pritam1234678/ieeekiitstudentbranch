@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { validateEvent, ValidationError } from '@/utils/validation';
+import { getApiUrl } from '@/lib/api/config';
 
 export default function CreateEvent() {
     const router = useRouter();
@@ -52,14 +53,13 @@ export default function CreateEvent() {
                 delete payload.image_url;
             }
 
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch('http://localhost:5000/api/events', {
+            const res = await fetch(getApiUrl('/api/events'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(payload),
+                credentials: 'include'
             });
 
             if (res.ok) {

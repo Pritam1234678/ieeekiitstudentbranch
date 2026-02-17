@@ -11,26 +11,25 @@ export function authenticateToken(
   next: NextFunction
 ) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  console.log('🔐 Auth middleware - checking token...');
-  console.log('   Token present:', !!token);
-  console.log('   JWT_SECRET:', process.env.JWT_SECRET ? 'SET' : 'NOT SET');
+  // Check header OR cookie
+  const token = (authHeader && authHeader.split(' ')[1]) || req.cookies?.token;
 
   if (token == null) {
-    console.log('❌ No token provided');
-    return res.sendStatus(401);
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+
+  if (!process.env.JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET not defined');
+    return res.status(500).json({ success: false, error: 'Server misconfiguration' });
   }
 
   jwt.verify(
     token,
-    process.env.JWT_SECRET || 'your-secret-key',
+    process.env.JWT_SECRET,
     (err: any, user: any) => {
       if (err) {
-        console.log('❌ Token verification failed:', err.message);
-        return res.sendStatus(403);
+        return res.status(403).json({ success: false, error: 'Invalid or expired token' });
       }
-      console.log('✅ Token verified, user:', user);
       req.user = user;
       next();
     }

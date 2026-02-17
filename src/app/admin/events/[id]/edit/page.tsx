@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toISTInputString } from '@/utils/helpers';
 import { validateEvent, ValidationError } from '@/utils/validation';
+import { getApiUrl } from '@/lib/api/config';
 
 export default function EditEvent({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
 
     const fetchEvent = async (eventId: string) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/events/${eventId}`);
+            const res = await fetch(getApiUrl(`/api/events/${eventId}`));
             const data = await res.json();
             if (data.success) {
                 // Format dates for datetime-local input (YYYY-MM-DDThh:mm)
@@ -95,14 +96,13 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
                 delete payload.image_url;
             }
 
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+            const res = await fetch(getApiUrl(`/api/events/${id}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(payload),
+                credentials: 'include'
             });
 
             if (res.ok) {

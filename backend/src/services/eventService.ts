@@ -57,6 +57,8 @@ export async function createEvent(eventData: CreateEventDTO): Promise<string> {
     description: eventData.description || undefined,
     start_time: startTime,
     end_time: endTime,
+    location: eventData.location || undefined,
+    registration_link: eventData.registration_link || undefined,
   });
 
   const savedEvent = await event.save();
@@ -72,22 +74,41 @@ export async function updateEvent(
   if (eventData.title !== undefined) updates.title = eventData.title;
   if (eventData.image_url !== undefined) updates.image_url = eventData.image_url;
   if (eventData.description !== undefined) updates.description = eventData.description;
-  if (eventData.start_time !== undefined) updates.start_time = new Date(eventData.start_time);
-  if (eventData.end_time !== undefined) updates.end_time = new Date(eventData.end_time);
+  if (eventData.location !== undefined) updates.location = eventData.location;
+  if (eventData.registration_link !== undefined) updates.registration_link = eventData.registration_link;
+  
+  // Date handling
+  let newStartTime: Date | undefined;
+  let newEndTime: Date | undefined;
+
+  if (eventData.start_time !== undefined) {
+    newStartTime = new Date(eventData.start_time);
+    updates.start_time = newStartTime;
+  }
+  
+  if (eventData.end_time !== undefined) {
+    newEndTime = new Date(eventData.end_time);
+    updates.end_time = newEndTime;
+  }
 
   if (Object.keys(updates).length === 0) {
     throw new Error('No fields to update');
   }
 
-  if (eventData.start_time && eventData.end_time) {
-    const startTime = new Date(eventData.start_time);
-    const endTime = new Date(eventData.end_time);
-    if (endTime <= startTime) {
-      throw new Error('End time must be after start time');
-    }
+  // Fetch existing event if we need to validate time range against existing data
+  const existingEvent = await Event.findById(id);
+  if (!existingEvent) {
+    throw new Error('Event not found');
   }
 
-  const result = await Event.findByIdAndUpdate(id, updates, { new: true });
+  const finalStartTime = newStartTime || existingEvent.start_time;
+  const finalEndTime = newEndTime || existingEvent.end_time;
+
+  if (finalEndTime <= finalStartTime) {
+    throw new Error('End time must be after start time');
+  }
+
+  const result = await Event.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
   return result !== null;
 }
 

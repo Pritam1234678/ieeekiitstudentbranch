@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
+import { getApiUrl } from '@/lib/api/config';
 
 interface Society {
     id: string;
@@ -118,7 +119,7 @@ export default function SocietiesPage() {
 
     const fetchSocieties = async () => {
         try {
-            const res = await fetch('http://localhost:5000/api/societies');
+            const res = await fetch(getApiUrl('/api/societies'), { credentials: 'include' });
             const data = await res.json();
             if (data.success) {
                 setSocieties(data.data);
@@ -133,10 +134,9 @@ export default function SocietiesPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this society?')) return;
         try {
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch(`http://localhost:5000/api/societies/${id}`, {
+            const res = await fetch(getApiUrl(`/api/societies/${id}`), {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+                credentials: 'include'
             });
             if (res.ok) {
                 setSocieties(societies.filter(society => society.id !== id));

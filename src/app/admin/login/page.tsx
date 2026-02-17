@@ -4,6 +4,16 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { gsap } from 'gsap';
+import { getApiUrl } from '@/lib/api/config';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type LoginErrorResponse = {
+    success?: boolean;
+    error?: string;
+    message?: string;
+    errors?: Array<{ msg?: string }>;
+};
 
 export default function AdminLogin() {
     const [email, setEmail] = useState('');
@@ -74,27 +84,42 @@ export default function AdminLogin() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        const normalizedEmail = email.trim().toLowerCase();
+
+        if (!EMAIL_REGEX.test(normalizedEmail)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        if (password.length < 8 || password.length > 128) {
+            setError('Password must be between 8 and 128 characters.');
+            return;
+        }
+
         setIsLoading(true);
 
-        console.log('🔐 Login attempt:', { email, password: '***' });
-
         try {
-            const res = await fetch('http://localhost:5000/api/auth/login', {
+            const res = await fetch(getApiUrl('/api/auth/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email: normalizedEmail, password }),
+                credentials: 'include', // Important for cookies
             });
 
-            console.log('📡 Response status:', res.status);
-            const data = await res.json();
-            console.log('📦 Response data:', data);
+            const rawResponse = await res.text();
+            let data: LoginErrorResponse = {};
 
-            if (data.success) {
-                console.log('✅ Login successful, saving token...');
-                localStorage.setItem('adminToken', data.token);
-                console.log('💾 Token saved to localStorage');
+            if (rawResponse) {
+                try {
+                    data = JSON.parse(rawResponse) as LoginErrorResponse;
+                } catch {
+                    data = { error: rawResponse };
+                }
+            }
+
+            if (res.ok && data.success) {
                 // Success Animation
                 gsap.to(formRef.current, {
                     scale: 0.95,
@@ -102,18 +127,17 @@ export default function AdminLogin() {
                     duration: 0.5,
                     ease: "power2.in",
                     onComplete: () => {
-                        console.log('🚀 Redirecting to /admin/societies');
                         router.push('/admin/societies');
                     }
                 });
             } else {
-                console.log('❌ Login failed:', data.error);
-                setError(data.error || 'Login failed');
+                const validationMessage = data.errors?.[0]?.msg;
+                setError(validationMessage || data.error || data.message || 'Login failed');
                 // Shake animation on error
                 gsap.fromTo(formRef.current, { x: -10 }, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
             }
         } catch (err) {
-            console.error('💥 Login error:', err);
+            console.error('Login error:', err);
             setError('An error occurred. Please try again.');
         } finally {
             setIsLoading(false);

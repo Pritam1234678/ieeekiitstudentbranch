@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { validateSociety, ValidationError } from '@/utils/validation';
+import { getApiUrl } from '@/lib/api/config';
 
 export default function EditSociety({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
@@ -14,7 +15,7 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
         logo_url: '',
         chair_name: '',
         description: '',
-        faculty_name: 'random',
+        faculty_name: '',
     });
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -32,13 +33,13 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
 
     const fetchSociety = async (societyId: string) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/societies/${societyId}`);
+            const res = await fetch(getApiUrl(`/api/societies/${societyId}`));
             const data = await res.json();
 
             if (data.success) {
                 setFormData({
                     ...data.data,
-                    faculty_name: data.data.faculty_name || 'random'
+                    faculty_name: data.data.faculty_name || ''
                 });
             }
         } catch (error) {
@@ -56,9 +57,6 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
         e.preventDefault();
         if (!id) return;
         setSubmitting(true);
-
-        if (!id) return;
-        setSubmitting(true);
         setErrors([]);
 
         const validationErrors = validateSociety(formData);
@@ -69,14 +67,13 @@ export default function EditSociety({ params }: { params: Promise<{ id: string }
         }
 
         try {
-            const token = localStorage.getItem('adminToken');
-            const res = await fetch(`http://localhost:5000/api/societies/${id}`, {
+            const res = await fetch(getApiUrl(`/api/societies/${id}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(formData),
+                credentials: 'include'
             });
 
             if (res.ok) {

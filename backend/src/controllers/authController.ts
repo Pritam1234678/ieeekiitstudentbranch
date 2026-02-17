@@ -1,14 +1,20 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { login } from '../services/authService';
 import { AuthRequest } from '../middleware/authMiddleware';
 
 export async function loginAdmin(req: Request, res: Response) {
   try {
-    const { email, password } = req.body;
-    
-    if (!email || !password) {
-       return res.status(400).json({ success: false, error: 'Email and password are required' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        error: errors.array()[0]?.msg || 'Invalid input',
+        errors: errors.array(),
+      });
     }
+
+    const { email, password } = req.body;
 
     const token = await login(email, password);
 
@@ -16,7 +22,24 @@ export async function loginAdmin(req: Request, res: Response) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
-    return res.json({ success: true, token });
+    const isProduction = process.env.NODE_ENV === 'production';
+    const sameSite: 'none' | 'lax' = isProduction ? 'none' : 'lax';
+
+    // Cross-site frontend/backend deployment needs SameSite=None in production.
+    // Local dev keeps Lax for simpler localhost behavior.
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite,
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
+
+    // Set HttpOnly cookie
+    res.cookie('token', token, {
+      ...cookieOptions
+    });
+
+    return res.json({ success: true, message: 'Logged in successfully' });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({ success: false, error: 'Login failed' });
@@ -42,48 +65,23 @@ export async function getMe(req: AuthRequest, res: Response) {
     } catch (error) {
         console.error('GetMe error:', error);
         return res.status(500).json({ success: false, error: 'Failed to fetch user details' });
-        return res.status(500).json({ success: false, error: 'Failed to fetch user details' });
     }
 }
 
-export async function setupAdmins(req: Request, res: Response) {
+// setupAdmins removed for security
+
+export async function logoutAdmin(req: Request, res: Response) {
     try {
-        const { Admin } = require('../models/admin');
-        const bcrypt = require('bcrypt');
-        
-        // Check if admin exists to avoid overwrite if unwanted, but script clears
-        // We will clear as per script logic because user wants reset
-        await Admin.deleteMany({});
-        
-        const passwordHash = await bcrypt.hash('Mandalp166#', 10);
-        
-        const admins = [
-            {
-                name: 'Pritam Mandal',
-                email: 'ieeekiitstudentbranch@gmail.com', // Correct email
-                password_hash: passwordHash,
-                phone_no: '9832956892'
-            },
-            {
-                name: 'Pritam Typo Check',
-                email: 'ieeekiitstudentbaranch@gmail.com', // Add typo version just in case user insists
-                password_hash: passwordHash,
-                phone_no: '0000000000'
-            }
-        ];
-        
-        await Admin.insertMany(admins);
-        
-        return res.json({ 
-            success: true, 
-            message: 'Admins set up successfully',
-            debug: {
-                jwtSecretExists: !!process.env.JWT_SECRET,
-                mongoUriExists: !!process.env.MONGO_URI
-            }
+        const isProduction = process.env.NODE_ENV === 'production';
+        const sameSite: 'none' | 'lax' = isProduction ? 'none' : 'lax';
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite
         });
-    } catch (error: any) {
-        console.error('Setup Admins error:', error);
-        return res.status(500).json({ success: false, error: error.message });
+        return res.json({ success: true, message: 'Logged out successfully' });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({ success: false, error: 'Logout failed' });
     }
 }

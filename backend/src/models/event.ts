@@ -12,6 +12,8 @@ export interface IEvent extends Document {
   description?: string;
   start_time: Date;
   end_time: Date;
+  location?: string;
+  registration_link?: string;
   created_at: Date;
   updated_at: Date;
   status: EventStatus;
@@ -24,6 +26,8 @@ const EventSchema = new Schema<IEvent>(
     description: { type: String },
     start_time: { type: Date, required: true },
     end_time: { type: Date, required: true },
+    location: { type: String },
+    registration_link: { type: String },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
@@ -49,6 +53,8 @@ export interface CreateEventDTO {
   description?: string;
   start_time: string | Date;
   end_time: string | Date;
+  location?: string;
+  registration_link?: string;
 }
 
 export interface UpdateEventDTO {
@@ -57,6 +63,8 @@ export interface UpdateEventDTO {
   description?: string;
   start_time?: string | Date;
   end_time?: string | Date;
+  location?: string;
+  registration_link?: string;
 }
 
 export interface EventStats {
