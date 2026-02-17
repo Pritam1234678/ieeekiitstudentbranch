@@ -226,7 +226,7 @@ const HeroSection = () => {
         </motion.div>
       </div>
 
-      <Marquee delay={1.55} />
+     
     </section>
   );
 };

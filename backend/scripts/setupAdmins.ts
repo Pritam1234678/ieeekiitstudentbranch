@@ -1,3 +1,8 @@
+// ⚠️ WARNING: This script is for initial setup/development only.
+// Do not run in production unless you intend to RESET admins.
+// Ideally, delete this file or restrict access in production.
+
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { Admin } from '../src/models/admin';
 import { connectDB } from '../src/config/db';
@@ -15,7 +20,7 @@ async function setupAdmins() {
     const admins = [
       {
         name: 'Pritam Mandal',
-        email: 'ieeekiitstudentbranch@gmail.com',
+        email: 'ieeekiitstudentbaranch@gmail.com',
         password_hash: await bcrypt.hash('Mandalp166#', 10),
         phone_no: '9832956892'
       }

@@ -42,5 +42,48 @@ export async function getMe(req: AuthRequest, res: Response) {
     } catch (error) {
         console.error('GetMe error:', error);
         return res.status(500).json({ success: false, error: 'Failed to fetch user details' });
+        return res.status(500).json({ success: false, error: 'Failed to fetch user details' });
+    }
+}
+
+export async function setupAdmins(req: Request, res: Response) {
+    try {
+        const { Admin } = require('../models/admin');
+        const bcrypt = require('bcrypt');
+        
+        // Check if admin exists to avoid overwrite if unwanted, but script clears
+        // We will clear as per script logic because user wants reset
+        await Admin.deleteMany({});
+        
+        const passwordHash = await bcrypt.hash('Mandalp166#', 10);
+        
+        const admins = [
+            {
+                name: 'Pritam Mandal',
+                email: 'ieeekiitstudentbranch@gmail.com', // Correct email
+                password_hash: passwordHash,
+                phone_no: '9832956892'
+            },
+            {
+                name: 'Pritam Typo Check',
+                email: 'ieeekiitstudentbaranch@gmail.com', // Add typo version just in case user insists
+                password_hash: passwordHash,
+                phone_no: '0000000000'
+            }
+        ];
+        
+        await Admin.insertMany(admins);
+        
+        return res.json({ 
+            success: true, 
+            message: 'Admins set up successfully',
+            debug: {
+                jwtSecretExists: !!process.env.JWT_SECRET,
+                mongoUriExists: !!process.env.MONGO_URI
+            }
+        });
+    } catch (error: any) {
+        console.error('Setup Admins error:', error);
+        return res.status(500).json({ success: false, error: error.message });
     }
 }

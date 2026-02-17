@@ -1,0 +1,144 @@
+Starting Container
+
+
+> ieee-backend@1.0.0 start
+> node dist/server.js
+
+≡ƒÜÇ Server is running on port 8080
+≡ƒôí API: http://localhost:8080/api/events
+≡ƒôí API: http://localhost:8080/api/societies
+≡ƒÆÜ Health: http://localhost:8080/health
+  
+Γ£à MongoDB connected successfully
+Server error: SyntaxError: Unexpected token \ in JSON at position 1
+    at JSON.parse (<anonymous>)
+    at parse (/app/node_modules/body-parser/lib/types/json.js:92:19)
+    at /app/node_modules/body-parser/lib/read.js:128:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:203:9)
+    at invokeCallback (/app/node_modules/raw-body/index.js:238:16)
+    at done (/app/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/app/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:517:28)
+    at endReadableNT (node:internal/streams/readable:1400:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  expose: true,
+  statusCode: 400,
+  status: 400,
+  body: '{\\',
+  type: 'entity.parse.failed'
+}
+Server error: SyntaxError: Unexpected token \ in JSON at position 1
+    at JSON.parse (<anonymous>)
+    at parse (/app/node_modules/body-parser/lib/types/json.js:92:19)
+    at /app/node_modules/body-parser/lib/read.js:128:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:203:9)
+    at invokeCallback (/app/node_modules/raw-body/index.js:238:16)
+    at done (/app/node_modules/raw-body/index.js:227:7)
+    at IncomingMessage.onEnd (/app/node_modules/raw-body/index.js:287:7)
+    at IncomingMessage.emit (node:events:517:28)
+    at endReadableNT (node:internal/streams/readable:1400:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  expose: true,
+  statusCode: 400,
+  status: 400,
+  body: '{\\',
+  type: 'entity.parse.failed'
+}
+≡ƒöÉ AuthService - login attempt for: ieeekiitstudentbranch@gmail.com
+Γ¥î Admin not found
+Γ£à Password valid, generating token...
+   JWT_SECRET: SET (your-super-secret-jw...)
+Γ£à Token generated: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5O...
+≡ƒöÉ AuthService - login attempt for: ieeekiitstudentbranch@gmail.com
+}
+Γ£à Token verified, user: {
+≡ƒöÉ AuthService - login attempt for: ieeekiitstudentbranch@gmail.com
+  id: '699403c515df0d9b51dc01ca',
+Γ£à Password valid, generating token...
+  email: 'ieeekiitstudentbranch@gmail.com',
+   JWT_SECRET: SET (your-super-secret-jw...)
+  name: 'Pritam Mandal',
+Γ£à Token generated: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5O...
+  iat: 1771308046,
+  exp: 1771912846
+≡ƒöÉ Auth middleware - checking token...
+   Token present: true
+   JWT_SECRET: SET
+≡ƒöÉ AuthService - login attempt for: ieeekiitstudentbaranch@gmail.com
+Γ£à Password valid, generating token...
+   JWT_SECRET: SET (your-super-secret-jw...)
+Γ£à Token generated: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5O...
+≡ƒöÉ Auth middleware - checking token...
+   Token present: true
+   JWT_SECRET: SET
+Γ£à Token verified, user: {
+  id: '699404948d8fff754cb981c3',
+  exp: 1771912994
+  email: 'ieeekiitstudentbaranch@gmail.com',
+}
+  name: 'Pritam Mandal',
+  iat: 1771308194,
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+≡ƒöÉ AuthService - login attempt for: test@example.com
+≡ƒöÉ AuthService - login attempt for: test@example.com
+Γ¥î Admin not found
+Γ¥î Admin not found

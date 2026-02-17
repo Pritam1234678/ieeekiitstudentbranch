@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface MarqueeProps {
     className?: string;
@@ -13,7 +14,7 @@ const Marquee = ({ className = "", delay = 0 }: MarqueeProps) => {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: delay, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative z-10 w-full mt-auto ${className}`}
+            className={cn("relative z-10 w-full mt-auto", className)}
         >
             <div className="marquee w-full border-t border-royal/15 bg-white/65 backdrop-blur-md shadow-[0_-18px_60px_rgba(11,94,215,0.1)]">
                 <div className="marquee__inner">

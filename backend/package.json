@@ -1,6 +1,6 @@
 {
   "name": "ieee-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IEEE Event Management System Backend API",
   "main": "dist/server.js",
   "scripts": {
@@ -25,9 +25,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
     "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.2.1"
+    "mongoose": "^9.2.1",
+    "@types/express-rate-limit": "^6.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
