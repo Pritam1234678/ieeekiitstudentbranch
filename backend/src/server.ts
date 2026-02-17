@@ -59,24 +59,19 @@ app.get('/version', (req: Request, res: Response) => {  res.json({ version: '1.0
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1, // Set to 1 to force block immediately
+  max: 5, // Strict limit: 5 login attempts per IP
   standardHeaders: true,
   legacyHeaders: false,
-  message: 'Too many login attempts',
-  handler: (req, res, next, options) => {
-      console.log(`[RATE LIMIT] Blocked IP: ${req.ip}`);
-      res.status(options.statusCode).send(options.message);
-  }
+  message: 'Too many login attempts, please try again after 15 minutes',
 });
 
 const botBlocker = (req: Request, res: Response, next: any) => {
   const userAgent = req.get('User-Agent') || '';
-  console.error(`[BOT CHECK ERROR LOG] UA: ${userAgent} | IP: ${req.ip}`);
+  // console.log(`[BOT CHECK] UA: ${userAgent} | IP: ${req.ip}`);
   
-  // FORCE BLOCK EVERYTHING TO TEST DEPLOYMENT
-  if (true || /curl|wget|python|postman|insomnia/i.test(userAgent)) {
-    console.error(`[BLOCK] Blocked Bot: ${userAgent}`);
-    return res.status(403).json({ success: false, error: 'Bots not allowed (TEST BLOCK)' });
+  if (/curl|wget|python|postman|insomnia/i.test(userAgent)) {
+    console.log(`[BLOCK] Blocked Bot: ${userAgent}`);
+    return res.status(403).json({ success: false, error: 'Bots not allowed' });
   }
   next();
 };
