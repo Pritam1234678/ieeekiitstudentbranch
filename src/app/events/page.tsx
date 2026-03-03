@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Navigation from "@/components/layout/Navigation";
@@ -21,6 +21,32 @@ export default function EventsPage() {
   const isInView = useInView(eventsRef, { once: true, amount: 0.1 });
 
   const { events: allEvents, loading, error } = useEvents();
+
+  // Prefetch all images for instant loading
+  useEffect(() => {
+    if (allEvents && allEvents.length > 0) {
+      allEvents.forEach((event) => {
+        // 1. Preload main cover image
+        if (event.image_url) {
+          const img = new Image();
+          img.src = getApiUrl(event.image_url);
+        }
+
+        // 2. Pre-fetch event details to get gallery images for HoverCarousel
+        fetch(getApiUrl(`/api/events/${event.id}`))
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success && data.data?.images?.length > 0) {
+              data.data.images.forEach((imgData: any) => {
+                const hoverImg = new Image();
+                hoverImg.src = getApiUrl(imgData.url);
+              });
+            }
+          })
+          .catch((err) => console.error("Prefetch failed for event:", event.id, err));
+      });
+    }
+  }, [allEvents]);
 
   const filteredEvents = useMemo(() => {
     if (selectedStatus === "All") return allEvents;
