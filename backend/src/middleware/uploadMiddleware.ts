@@ -21,10 +21,13 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req: any, file: any, cb: any) => {
-    if (file.mimetype.startsWith('image/')) {
+    const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.heic'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+    if (file.mimetype.startsWith('image/') && allowedExtensions.includes(ext)) {
         cb(null, true);
     } else {
-        cb(new Error('Not an image! Please upload an image.'), false);
+        cb(new Error('Invalid file type! Only PNG, JPG, WEBP, HEIC, and GIF images are allowed. SVG and scripts are blocked.'), false);
     }
 };
 
