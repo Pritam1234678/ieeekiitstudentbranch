@@ -318,19 +318,34 @@ function ModernTeamSection({
 
               {/* Icon row */}
               <div className="flex items-center gap-3 mt-2">
-                {/* Faculty: Info icon instead of LinkedIn */}
+                {/* Faculty: Info icon → links to LinkedIn if available */}
                 {["Director", "Faculty In Charge"].includes(member.position) ? (
-                  <span
-                    title="Faculty Advisor"
-                    className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[#eff6ff] text-[#2563eb] hover:bg-[#2563eb] hover:text-white hover:scale-110 transition-all duration-300 shadow-sm cursor-default"
-                  >
-                    {/* Info Icon */}
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="8" strokeLinecap="round" strokeWidth={3} />
-                      <line x1="12" y1="12" x2="12" y2="16" strokeLinecap="round" strokeWidth={2} />
-                    </svg>
-                  </span>
+                  member.linkedin ? (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="View Profile"
+                      className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[#eff6ff] text-[#2563eb] hover:bg-[#2563eb] hover:text-white hover:scale-110 transition-all duration-300 shadow-sm"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="8" strokeLinecap="round" strokeWidth={3} />
+                        <line x1="12" y1="12" x2="12" y2="16" strokeLinecap="round" strokeWidth={2} />
+                      </svg>
+                    </a>
+                  ) : (
+                    <span
+                      title="Faculty Advisor"
+                      className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[#eff6ff] text-[#2563eb] shadow-sm cursor-default"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="8" strokeLinecap="round" strokeWidth={3} />
+                        <line x1="12" y1="12" x2="12" y2="16" strokeLinecap="round" strokeWidth={2} />
+                      </svg>
+                    </span>
+                  )
                 ) : member.linkedin ? (
                   <a
                     href={member.linkedin}
