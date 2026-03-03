@@ -5,6 +5,15 @@ export const submitContactForm = async (req: Request, res: Response) => {
     try {
         const { name, email, subject, message } = req.body;
 
+        // Anti-spam basic check: ensure the request came from a browser with an Origin or Referer header
+        // and clearly has a User-Agent. This stops low-effort cURL scripts.
+        const origin = req.get('origin') || req.get('referer');
+        const userAgent = req.get('user-agent');
+        
+        if (!origin || !userAgent || userAgent.includes('curl') || userAgent.includes('PostmanRuntime')) {
+            return res.status(403).json({ success: false, message: 'Direct script access is forbidden.' });
+        }
+
         if (!name || !email || !subject || !message) {
             return res.status(400).json({ success: false, message: 'All fields are required.' });
         }

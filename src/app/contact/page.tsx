@@ -153,6 +153,15 @@ export default function ContactPage() {
         body: JSON.stringify(formData),
       });
 
+      if (response.status === 429) {
+        // Handle Rate Limit specifically
+        const errorData = await response.json();
+        setToast({ show: true, message: errorData.message || 'You have sent too many messages. Please try again later.', type: 'error' });
+        setIsSubmitting(false);
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 5000);
+        return;
+      }
+
       const data = await response.json();
 
       if (data.success) {
