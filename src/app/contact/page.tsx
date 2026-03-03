@@ -351,7 +351,7 @@ export default function ContactPage() {
                     </svg>
                   </div>
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[#4A90E2] mb-2">Email</p>
-                  <p className="text-sm font-medium text-[#0F1419]">ieee@kiit.ac.in</p>
+                  <p className="text-sm font-medium text-[#0F1419]">support@ieeestudentbranchkiit.in</p>
                 </div>
               </div>
 
@@ -364,7 +364,7 @@ export default function ContactPage() {
                     </svg>
                   </div>
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[#4A90E2] mb-2">Phone</p>
-                  <p className="text-sm font-medium text-[#0F1419]">+91 1234567890</p>
+                  <p className="text-sm font-medium text-[#0F1419]">+91 7608976946</p>
                 </div>
               </div>
 
@@ -406,18 +406,18 @@ export default function ContactPage() {
                   Visit Our Campus
                 </h3>
                 <p className="text-[#64748B] text-sm font-light mb-6">
-                  Founders Hall, KIIT Deemed University
+                  10, KIIT Rd, Chandaka Industrial Estate, K I I T University, Patia, Bhubaneswar, Odisha 751024
                 </p>
                 <div className="relative h-64 bg-slate-100 rounded-2xl overflow-hidden border border-[#D4E4F7]/50">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3740.636737330588!2d85.81665497520067!3d20.35661918112836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19093cc3e1974b%3A0x85a345e1f4fcce86!2sKIIT%20Student%20Activity%20Center%20-%20KSAC!5e0!3m2!1sen!2sin!4v1709400000000!5m2!1sen!2sin"
+                    src="https://maps.google.com/maps?q=20.35382792860987,85.81651204890484&hl=en&z=17&output=embed"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="KIIT Student Activity Center Map"
+                    title="KIIT University Map"
                     className="grayscale hover:grayscale-0 transition-all duration-500"
                   />
                 </div>
@@ -434,14 +434,22 @@ export default function ContactPage() {
                 <p className="text-[#64748B] text-sm font-light mb-6">
                   Follow our journey across platforms
                 </p>
-                <div className="flex flex-wrap gap-3">
-                  {["LinkedIn", "Instagram", "Twitter", "GitHub"].map((social) => (
+                <div className="flex gap-3 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                  {[
+                    { name: "LinkedIn", url: "https://www.linkedin.com/company/ieee-kiit-student-branch/" },
+                    { name: "Instagram", url: "https://www.instagram.com/ieee_kiit_student_branch/" },
+                    { name: "Twitter", url: "https://x.com/IeeeKiit" },
+                    { name: "Facebook", url: "https://www.facebook.com/pages/KIIT%20IEEE%20Student%20Branch/135174326824031/#" },
+                    { name: "Youtube", url: "https://www.youtube.com/@ieeekiitstudentbranch" }
+                  ].map((social) => (
                     <a
-                      key={social}
-                      href="#"
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="group/link relative px-5 py-2.5 bg-gradient-to-r from-[#F0F7FF] to-white border border-[#D4E4F7]/50 rounded-full text-sm font-medium text-[#2E5C8A] overflow-hidden transition-all duration-300 hover:border-[#4A90E2] hover:shadow-[0_4px_16px_rgba(74,144,226,0.15)]"
                     >
-                      <span className="relative z-10">{social}</span>
+                      <span className="relative z-10">{social.name}</span>
                       <div className="absolute inset-0 bg-gradient-to-r from-[#E8F1FF] to-[#F0F7FF] opacity-0 group-hover/link:opacity-100 transition-opacity duration-300" />
                     </a>
                   ))}

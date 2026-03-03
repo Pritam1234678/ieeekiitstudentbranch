@@ -3,10 +3,12 @@ import Link from "next/link";
 import Marquee from "@/components/layout/Marquee";
 
 const socialLinks = [
-  { name: "LinkedIn", url: "#" },
-  { name: "Instagram", url: "#" },
-  { name: "Twitter", url: "#" },
-  { name: "GitHub", url: "#" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/company/ieee-kiit-student-branch/" },
+  { name: "Instagram", url: "https://www.instagram.com/ieee_kiit_student_branch/" },
+  { name: "Twitter", url: "https://x.com/IeeeKiit" },
+  { name: "Facebook", url: "https://www.facebook.com/pages/KIIT%20IEEE%20Student%20Branch/135174326824031/#" },
+  { name: "Youtube", url: "https://www.youtube.com/@ieeekiitstudentbranch" }
+
 ];
 const navLinks = [
   { label: "Home", path: "/" },

@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 import eventRoutes from './routes/eventRoutes';
 import societyRoutes from './routes/societyRoutes';
 import authRoutes from './routes/authRoutes';
@@ -25,9 +26,18 @@ if (!process.env.JWT_SECRET) {
 
 // Middleware
 // Trust proxy headers in hosted environments so req.ip reflects real client IP.
-app.set('trust proxy', true);
+// Trust proxy headers for rate limiting
+app.set('trust proxy', 1);
 
 app.use(helmet()); // Security headers
+// Serve static files from uploads directory
+// Override helmet's default `Cross-Origin-Resource-Policy: same-origin` so images can be
+// loaded cross-origin (frontend on :3000 fetching images from backend on :5000).
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(process.cwd(), 'public/uploads')));
+
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

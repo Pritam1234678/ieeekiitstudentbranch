@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import * as eventService from '../services/eventService';
 import { EventStatus } from '../models/event';
+import fs from 'fs';
+import path from 'path';
 
 export async function getAllEvents(req: Request, res: Response) {
   try {
@@ -71,9 +73,14 @@ export async function getEventById(req: Request, res: Response) {
       });
     }
 
+    const images = await eventService.getEventImages(eventId);
+
     res.json({
       success: true,
-      data: event,
+      data: {
+        ...event.toObject(),
+        images
+      },
     });
   } catch (error) {
     console.error('Error fetching event:', error);
@@ -95,7 +102,20 @@ export async function createEvent(req: Request, res: Response) {
       });
     }
 
-    const eventId = await eventService.createEvent(req.body);
+    const eventData = req.body;
+    if (req.body.managed_by) {
+      try {
+        eventData.managed_by = JSON.parse(req.body.managed_by);
+      } catch (e) {
+        eventData.managed_by = [req.body.managed_by];
+      }
+    }
+
+    if (req.file) {
+      eventData.image_url = `/uploads/events/${req.file.filename}`;
+    }
+
+    const eventId = await eventService.createEvent(eventData);
 
     res.status(201).json({
       success: true,
@@ -111,6 +131,7 @@ export async function createEvent(req: Request, res: Response) {
     });
   }
 }
+
 
 export async function updateEvent(req: Request, res: Response) {
   try {
@@ -131,7 +152,20 @@ export async function updateEvent(req: Request, res: Response) {
       });
     }
 
-    const updated = await eventService.updateEvent(eventId, req.body);
+    const eventData = req.body;
+    if (req.body.managed_by) {
+      try {
+        eventData.managed_by = JSON.parse(req.body.managed_by);
+      } catch (e) {
+        eventData.managed_by = [req.body.managed_by];
+      }
+    }
+
+    if (req.file) {
+      eventData.image_url = `/uploads/events/${req.file.filename}`;
+    }
+
+    const updated = await eventService.updateEvent(eventId, eventData);
 
     if (!updated) {
       return res.status(404).json({
@@ -153,6 +187,53 @@ export async function updateEvent(req: Request, res: Response) {
     });
   }
 }
+
+export async function uploadEventImages(req: Request, res: Response) {
+  try {
+    const eventId = req.params.id;
+    if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+      return res.status(400).json({ success: false, error: 'No files uploaded' });
+    }
+
+    const images = await eventService.addEventImages(eventId, req.files as Express.Multer.File[]);
+
+    res.json({
+      success: true,
+      data: images,
+      message: 'Images uploaded successfully'
+    });
+  } catch (error) {
+    console.error('Error uploading event images:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to upload images',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
+export async function deleteEventImage(req: Request, res: Response) {
+  try {
+    const imageId = req.params.imageId;
+    // Ideally we should also delete the file from disk here or in service
+    // For now, just removing DB record
+    const result = await eventService.removeEventImage(imageId);
+
+    if (!result) {
+        return res.status(404).json({ success: false, error: 'Image not found' });
+    }
+
+    res.json({ success: true, message: 'Image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting event image:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete image',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
 
 export async function deleteEvent(req: Request, res: Response) {
   try {

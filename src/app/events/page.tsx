@@ -2,24 +2,26 @@
 
 import { useState, useRef, useMemo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import { useEvents } from "@/lib/api/hooks";
-import { EventStatus } from "@/lib/api/types";
 import { formatDateIST } from "@/utils/helpers";
 import Marquee from "@/components/layout/Marquee";
+import GalleryCarousel from "@/components/ui/GalleryCarousel";
+import HoverCarousel from "@/components/ui/HoverCarousel";
+import { getApiUrl } from "@/lib/api/config";
 
 const statuses = ["All", "Upcoming", "Live", "Past"];
 
 export default function EventsPage() {
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [galleryEvent, setGalleryEvent] = useState<{ id: string; title: string } | null>(null);
   const eventsRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(eventsRef, { once: true, amount: 0.1 });
 
-  // Fetch events from backend API
   const { events: allEvents, loading, error } = useEvents();
 
-  // Filter events by status
   const filteredEvents = useMemo(() => {
     if (selectedStatus === "All") return allEvents;
     return allEvents.filter(
@@ -27,24 +29,7 @@ export default function EventsPage() {
     );
   }, [allEvents, selectedStatus]);
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    return formatDateIST(dateString);
-  };
-
-  // Get status badge color
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case EventStatus.LIVE:
-        return "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg animate-pulse";
-      case EventStatus.UPCOMING:
-        return "bg-gradient-to-r from-royal to-navy text-white shadow-lg";
-      case EventStatus.PAST:
-        return "bg-navy/90 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
-  };
+  const formatDate = (dateString: string) => formatDateIST(dateString);
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -66,9 +51,8 @@ export default function EventsPage() {
             transition={{ duration: 0.8 }}
             className="inline-block mb-6 px-6 py-2 bg-white/80 backdrop-blur-sm border border-royal/20 rounded-full"
           >
-            <span className="text-royal font-semibold text-sm">EVENTS & INITIATIVES</span>
+            <span className="text-royal font-semibold text-sm">EVENTS &amp; INITIATIVES</span>
           </motion.div>
-
 
           <div className="h-24 md:h-32 mb-8 relative overflow-hidden">
             <AnimatePresence mode="wait">
@@ -80,10 +64,11 @@ export default function EventsPage() {
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                {selectedStatus} <span className="text-royal ml-4">Events</span>
+                {selectedStatus}&nbsp;<span className="text-royal">Events</span>
               </motion.h1>
             </AnimatePresence>
           </div>
+
           <motion.p
             className="text-xl md:text-2xl text-navy/60 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
@@ -98,50 +83,48 @@ export default function EventsPage() {
       {/* Filters */}
       <section className="py-8 px-6 sticky top-24 z-40">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
-            {/* Status Filter */}
-            <div className="flex gap-3">
-              {statuses.map((status) => (
-                <motion.button
-                  key={status}
-                  onClick={() => setSelectedStatus(status)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedStatus === status
-                    ? "bg-navy text-white shadow-lg"
-                    : "bg-white/90 text-navy/70 border border-royal/20 hover:border-royal/40 hover:bg-white"
-                    }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {status}
-                </motion.button>
-              ))}
-            </div>
+          <div className="flex gap-3 justify-center flex-wrap">
+            {statuses.map((status) => (
+              <motion.button
+                key={status}
+                onClick={() => setSelectedStatus(status)}
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${selectedStatus === status
+                  ? "bg-[#0F1419] text-white shadow-lg shadow-[#0F1419]/20"
+                  : "bg-white text-[#4A90E2] border border-[#D4E4F7] hover:border-[#4A90E2] hover:bg-[#F0F7FF]"
+                  }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {status}
+              </motion.button>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Events Grid */}
-      <section ref={eventsRef} className="py-20 px-6 relative">
+      <section ref={eventsRef} className="py-16 px-6 relative">
         <div className="max-w-7xl mx-auto">
-          {/* Loading State */}
+
+          {/* Loading */}
           {loading && (
             <div className="text-center py-32">
-              <div className="inline-block p-8 bg-white/70 backdrop-blur-xl rounded-3xl border border-royal/20">
-                <div className="w-16 h-16 border-4 border-royal/30 border-t-royal rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-xl font-semibold text-navy/70">Loading Events...</p>
+              <div className="inline-flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-2 border-[#D4E4F7] border-t-[#4A90E2] rounded-full animate-spin" />
+                <p className="text-[#64748B] text-sm tracking-widest uppercase">Loading Events</p>
               </div>
             </div>
           )}
 
-          {/* Error State */}
+          {/* Error */}
           {error && (
             <div className="text-center py-32">
-              <div className="inline-block p-8 bg-white/70 backdrop-blur-xl rounded-3xl border border-red-200">
-                <p className="text-2xl font-bold text-red-600 mb-2">⚠️ Error Loading Events</p>
-                <p className="text-navy/60">{error}</p>
+              <div className="inline-block p-8 bg-white/5 backdrop-blur-xl rounded-2xl border border-red-400/20">
+                <p className="text-2xl font-bold text-red-400 mb-2">⚠️ Error Loading Events</p>
+                <p className="text-white/40">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="mt-4 px-6 py-2 bg-royal text-white rounded-full font-semibold hover:bg-navy transition-colors"
+                  className="mt-4 px-6 py-2 bg-white/10 text-white rounded-full font-semibold hover:bg-white/20 transition-colors"
                 >
                   Retry
                 </button>
@@ -149,109 +132,21 @@ export default function EventsPage() {
             </div>
           )}
 
-          {/* Events Grid */}
+          {/* Cards */}
           {!loading && !error && (
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
               layout
             >
               {filteredEvents.map((event, index) => (
-                <motion.div
+                <EventCard
                   key={event.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="group relative rounded-3xl overflow-hidden"
-                  whileHover={{ y: -12 }}
-                >
-                  {/* Glass Card */}
-                  <div className="relative h-full bg-white/70 backdrop-blur-xl border border-royal/20 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-royal/20 transition-all duration-500">
-                    {/* Status Badge */}
-                    <div
-                      className={`absolute top-5 right-5 px-4 py-1.5 rounded-full text-xs font-bold z-10 backdrop-blur-sm ${getStatusColor(
-                        event.status
-                      )}`}
-                    >
-                      {event.status}
-                    </div>
-
-                    {/* Image Section with Event Image or Gradient */}
-                    <motion.div
-                      className="relative h-56 overflow-hidden"
-                      whileHover={{ scale: 1.08 }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      {event.image_url ? (
-                        <img
-                          src={event.image_url}
-                          alt={event.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-royal via-navy to-royal">
-                          {/* Animated Pattern */}
-                          <div className="absolute inset-0 opacity-10">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-white rounded-full animate-spin-slow" />
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-white rounded-full animate-spin-reverse" />
-                          </div>
-
-                          <div className="absolute inset-0 flex items-center justify-center text-white text-6xl font-black opacity-20 tracking-tighter">
-                            IEEE
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
-                    </motion.div>
-
-                    {/* Content */}
-                    <div className="p-7">
-                      {/* Date */}
-                      <p className="text-sm text-navy/50 font-medium mb-3 tracking-wide">
-                        📅 {formatDate(event.start_time)}
-                        {event.end_time && event.start_time !== event.end_time &&
-                          ` - ${formatDate(event.end_time)}`
-                        }
-                      </p>
-
-                      {/* Title */}
-                      <h3 className="text-2xl font-bold text-navy mb-4 group-hover:text-royal transition-colors leading-tight">
-                        {event.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-navy/70 leading-relaxed mb-6 line-clamp-3">
-                        {event.description || "Join us for this exciting event!"}
-                      </p>
-
-                      {/* Learn More Link */}
-                      <div className="flex items-center gap-2 text-royal font-semibold group-hover:gap-4 transition-all">
-                        <span>Explore Event</span>
-                        <svg
-                          className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2.5}
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Hover Gradient Border Effect */}
-                    <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-royal/20 via-transparent to-navy/20" />
-                    </div>
-                  </div>
-                </motion.div>
+                  event={event}
+                  index={index}
+                  isInView={isInView}
+                  formatDate={formatDate}
+                  setGalleryEvent={setGalleryEvent}
+                />
               ))}
             </motion.div>
           )}
@@ -263,9 +158,9 @@ export default function EventsPage() {
               animate={{ opacity: 1 }}
               className="text-center py-32"
             >
-              <div className="inline-block p-8 bg-white/70 backdrop-blur-xl rounded-3xl border border-royal/20">
-                <p className="text-3xl font-bold text-navy/40 mb-2">No Events Found</p>
-                <p className="text-navy/50">
+              <div className="inline-block p-10 bg-white/90 backdrop-blur-xl rounded-3xl border border-[#D4E4F7]/50 shadow-[0_8px_32px_rgba(74,144,226,0.1)]">
+                <p className="text-3xl font-light text-[#0F1419] mb-3">No Events Found</p>
+                <p className="text-[#64748B] text-lg font-light">
                   {selectedStatus !== "All"
                     ? `No ${selectedStatus.toLowerCase()} events at the moment`
                     : "No events available"}
@@ -275,8 +170,176 @@ export default function EventsPage() {
           )}
         </div>
       </section>
-     
+
       <Footer />
+
+      {/* Gallery Carousel */}
+      <AnimatePresence>
+        {galleryEvent && (
+          <GalleryCarousel
+            key={galleryEvent.id}
+            eventId={galleryEvent.id}
+            eventTitle={galleryEvent.title}
+            onClose={() => setGalleryEvent(null)}
+          />
+        )}
+      </AnimatePresence>
     </main>
+  );
+}
+
+// Separate component to safely use hooks inside mapped items
+function EventCard({ event, index, isInView, formatDate, setGalleryEvent }: any) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative rounded-2xl overflow-hidden"
+      whileHover={{ y: -6, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+    >
+      {/* Full-bleed card */}
+      <div className="relative h-[440px] w-full overflow-hidden rounded-2xl border border-white/5 shadow-2xl shadow-black/40 group-hover:border-white/15 group-hover:shadow-royal/20 transition-all duration-500">
+
+        {/* Background layer */}
+        <motion.div
+          className="absolute inset-0"
+          whileHover={{ scale: 1.06 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Base Image or Placeholder */}
+          <div className="absolute inset-0">
+            {event.image_url ? (
+              <img
+                src={getApiUrl(event.image_url)}
+                alt={event.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-[#0B3D91] via-[#0a1628] to-[#041024] flex items-center justify-center">
+                <span className="text-white/5 text-[120px] font-black tracking-tighter select-none">IEEE</span>
+              </div>
+            )}
+          </div>
+
+          {/* Hover Sliding Image Carousel */}
+          <HoverCarousel
+            eventId={event.id}
+            isHovered={isHovered}
+          />
+        </motion.div>
+
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-royal/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* Status badge */}
+        <div className="absolute top-4 left-4 z-20">
+          {event.status === "LIVE" ? (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-emerald-300 text-[11px] font-bold tracking-widest uppercase">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              </span>
+              Live Now
+            </div>
+          ) : event.status === "UPCOMING" ? (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-royal/20 backdrop-blur-md border border-royal/30 text-blue-200 text-[11px] font-bold tracking-widest uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-300" />
+              Upcoming
+            </div>
+          ) : (
+            <div className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/50 text-[11px] font-bold tracking-widest uppercase">
+              Past
+            </div>
+          )}
+        </div>
+
+        {/* View Details External Link */}
+        {event.status !== "UPCOMING" && (
+          <Link
+            href={`/events/${event.id}`}
+            className="absolute top-4 right-4 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white hover:bg-white hover:text-[#0B3D91] hover:scale-110 transition-all duration-300 group/link"
+            aria-label={`View details for ${event.title}`}
+          >
+            <svg className="w-4 h-4 group-hover/link:translate-x-[2px] group-hover/link:-translate-y-[2px] transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
+        )}
+
+        {/* Index watermark (Moved slightly down) */}
+        <div className="absolute top-16 right-5 z-20 font-black text-white/10 text-sm tabular-nums tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {String(index + 1).padStart(2, "0")}
+        </div>
+
+        {/* Bottom content */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 p-5">
+          {/* Thin accent line */}
+          <div className="w-8 h-px bg-white/30 group-hover:w-16 group-hover:bg-royal transition-all duration-500 mb-4" />
+
+          {/* Date */}
+          <p className="text-white/40 text-[11px] font-semibold tracking-[0.2em] uppercase mb-2">
+            {formatDate(event.start_time)}
+            {event.end_time && event.start_time !== event.end_time &&
+              ` — ${formatDate(event.end_time)}`}
+          </p>
+
+          {/* Title */}
+          <h3 className="text-white text-[1.35rem] font-bold leading-snug mb-4 line-clamp-2 group-hover:text-sky-200 transition-colors duration-300">
+            {event.title}
+          </h3>
+
+          {/* CTA */}
+          {event.status === "UPCOMING" ? (
+            <Link
+              href={`/events/${event.id}`}
+              className="relative w-full flex items-center justify-between px-5 py-3 rounded-xl bg-white/8 backdrop-blur-md border border-white/12 text-white text-sm font-semibold overflow-hidden group/btn hover:border-white/30 transition-colors duration-300"
+              aria-label="View Details"
+            >
+              <span className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-0 bg-gradient-to-r from-royal/30 to-sky-500/20 transition-transform duration-500 ease-out" />
+              <span className="relative flex items-center gap-2 text-white/80 group-hover/btn:text-white transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                View Details
+              </span>
+              <svg className="relative w-4 h-4 text-white/40 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          ) : (
+            <motion.button
+              onClick={(e) => {
+                e.stopPropagation();
+                setGalleryEvent({ id: event.id, title: event.title });
+              }}
+              className="relative w-full flex items-center justify-between px-5 py-3 rounded-xl bg-white/8 backdrop-blur-md border border-white/12 text-white text-sm font-semibold overflow-hidden group/btn hover:border-white/30 transition-colors duration-300"
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.98 }}
+              aria-label="View gallery"
+            >
+              <span className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-0 bg-gradient-to-r from-royal/30 to-sky-500/20 transition-transform duration-500 ease-out" />
+              <span className="relative flex items-center gap-2 text-white/80 group-hover/btn:text-white transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                View Gallery
+              </span>
+              <svg className="relative w-4 h-4 text-white/40 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </motion.button>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 }
