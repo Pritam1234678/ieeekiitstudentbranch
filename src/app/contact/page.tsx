@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navigation from "@/components/layout/Navigation";
@@ -16,6 +17,9 @@ export default function ContactPage() {
     subject: "",
     message: "",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({ show: false, message: '', type: 'success' });
 
   const heroRef = useRef<HTMLDivElement | null>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
@@ -137,24 +141,69 @@ export default function ContactPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    // Success animation
-    gsap.to(".submit-btn", {
-      scale: 0.95,
-      duration: 0.1,
-      yoyo: true,
-      repeat: 1,
-      onComplete: () => {
-        // Add your form submission logic here
-      },
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setToast({ show: true, message: 'Message sent successfully! We will get back to you soon.', type: 'success' });
+        setFormData({ name: '', email: '', subject: '', message: '' }); // Reset form
+
+        // Success animation
+        gsap.to(".submit-btn", {
+          scale: 0.95,
+          duration: 0.1,
+          yoyo: true,
+          repeat: 1,
+        });
+      } else {
+        setToast({ show: true, message: data.message || 'Failed to send message. Please try again.', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setToast({ show: true, message: 'An error occurred. Please check your connection and try again.', type: 'error' });
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 5000);
+    }
   };
 
   return (
     <main className="relative bg-white overflow-hidden">
       <Navigation />
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={`fixed top-24 left-1/2 z-50 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-xl backdrop-blur-md border ${toast.type === 'success' ? 'bg-emerald-50/90 border-emerald-200 text-emerald-800' : 'bg-red-50/90 border-red-200 text-red-800'
+              }`}
+          >
+            {toast.type === 'success' ? (
+              <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            ) : (
+              <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            )}
+            <span className="font-medium text-sm">{toast.message}</span>
+            <button aria-label="Close notification" title="Close" onClick={() => setToast({ ...toast, show: false })} className="ml-2 hover:opacity-70 transition-opacity">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Sophisticated Background System */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -314,9 +363,22 @@ export default function ContactPage() {
                     </p>
                     <button
                       type="submit"
-                      className="submit-btn group relative px-8 py-4 bg-gradient-to-r from-[#2E5C8A] to-[#4A90E2] text-white font-medium rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_8px_24px_rgba(74,144,226,0.35)] active:scale-95"
+                      disabled={isSubmitting}
+                      className={`submit-btn group relative px-8 py-4 bg-gradient-to-r from-[#2E5C8A] to-[#4A90E2] text-white font-medium rounded-full overflow-hidden transition-all duration-300 hover:shadow-[0_8px_24px_rgba(74,144,226,0.35)] active:scale-95 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
-                      <span className="relative z-10">Send Message</span>
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {isSubmitting ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Sending...
+                          </>
+                        ) : (
+                          "Send Message"
+                        )}
+                      </span>
                       <div className="absolute inset-0 bg-gradient-to-r from-[#4A90E2] to-[#5A9AE5] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </button>
                   </div>
@@ -341,7 +403,7 @@ export default function ContactPage() {
           {/* Contact Information Sidebar */}
           <div className="space-y-6">
             {/* Contact Cards Grid */}
-            <div ref={contactCardsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div ref={contactCardsRef} className="grid grid-cols-1 gap-4">
               <div className="contact-card group relative">
                 <div className="absolute -inset-1 bg-gradient-to-br from-[#E8F1FF] to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
                 <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-2xl p-6 transition-all duration-300 hover:border-[#4A90E2]/40">
@@ -351,7 +413,7 @@ export default function ContactPage() {
                     </svg>
                   </div>
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[#4A90E2] mb-2">Email</p>
-                  <p className="text-sm font-medium text-[#0F1419]">support@ieeestudentbranchkiit.in</p>
+                  <p className="text-sm font-medium text-[#0F1419] break-all sm:break-normal">support@ieeestudentbranchkiit.in</p>
                 </div>
               </div>
 
@@ -364,26 +426,13 @@ export default function ContactPage() {
                     </svg>
                   </div>
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[#4A90E2] mb-2">Phone</p>
-                  <p className="text-sm font-medium text-[#0F1419]">+91 7608976946</p>
+                  <p className="text-sm font-medium text-[#0F1419]">+91 7608976946 <span className="text-[#64748B] text-xs ml-1">(Ravindu)</span></p>
                 </div>
               </div>
 
-              <div className="contact-card group relative col-span-2">
-                <div className="absolute -inset-1 bg-gradient-to-br from-[#E8F1FF] to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-                <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-2xl p-6 transition-all duration-300 hover:border-[#4A90E2]/40">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#E8F1FF] to-[#F0F7FF] rounded-xl flex items-center justify-center mb-4">
-                    <svg className="w-5 h-5 text-[#4A90E2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-[#4A90E2] mb-2">Location</p>
-                  <p className="text-sm font-medium text-[#0F1419]">KIIT University, Bhubaneswar</p>
-                  <p className="text-xs text-[#64748B] mt-1">Odisha, India</p>
-                </div>
-              </div>
 
-              <div className="contact-card group relative col-span-2">
+
+              <div className="contact-card group relative">
                 <div className="absolute -inset-1 bg-gradient-to-br from-[#E8F1FF] to-transparent rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
                 <div className="relative bg-white/90 backdrop-blur-sm border border-[#D4E4F7]/50 rounded-2xl p-6 transition-all duration-300 hover:border-[#4A90E2]/40">
                   <div className="w-10 h-10 bg-gradient-to-br from-[#E8F1FF] to-[#F0F7FF] rounded-xl flex items-center justify-center mb-4">
@@ -406,7 +455,7 @@ export default function ContactPage() {
                   Visit Our Campus
                 </h3>
                 <p className="text-[#64748B] text-sm font-light mb-6">
-                  10, KIIT Rd, Chandaka Industrial Estate, K I I T University, Patia, Bhubaneswar, Odisha 751024
+                  Campus 3, KIIT Rd, Chandaka Industrial Estate, K I I T University, Patia, Bhubaneswar, Odisha 751024
                 </p>
                 <div className="relative h-64 bg-slate-100 rounded-2xl overflow-hidden border border-[#D4E4F7]/50">
                   <iframe
@@ -434,22 +483,25 @@ export default function ContactPage() {
                 <p className="text-[#64748B] text-sm font-light mb-6">
                   Follow our journey across platforms
                 </p>
-                <div className="flex gap-3 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+                <div className="flex flex-wrap gap-2 pb-4 justify-between sm:justify-start">
                   {[
-                    { name: "LinkedIn", url: "https://www.linkedin.com/company/ieee-kiit-student-branch/" },
-                    { name: "Instagram", url: "https://www.instagram.com/ieee_kiit_student_branch/" },
-                    { name: "Twitter", url: "https://x.com/IeeeKiit" },
-                    { name: "Facebook", url: "https://www.facebook.com/pages/KIIT%20IEEE%20Student%20Branch/135174326824031/#" },
-                    { name: "Youtube", url: "https://www.youtube.com/@ieeekiitstudentbranch" }
+                    { name: "LinkedIn", icon: <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>, url: "https://www.linkedin.com/company/ieee-kiit-student-branch/" },
+                    { name: "Instagram", icon: <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069v-2.163zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>, url: "https://www.instagram.com/ieee_kiit_student_branch/" },
+                    { name: "Twitter", icon: <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" /></svg>, url: "https://x.com/IeeeKiit" },
+                    { name: "Facebook", icon: <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" /></svg>, url: "https://www.facebook.com/pages/KIIT%20IEEE%20Student%20Branch/135174326824031/#" },
+                    { name: "Youtube", icon: <svg fill="currentColor" viewBox="0 0 24 24" className="w-4 h-4"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>, url: "https://www.youtube.com/@ieeekiitstudentbranch" }
                   ].map((social) => (
                     <a
                       key={social.name}
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group/link relative px-5 py-2.5 bg-gradient-to-r from-[#F0F7FF] to-white border border-[#D4E4F7]/50 rounded-full text-sm font-medium text-[#2E5C8A] overflow-hidden transition-all duration-300 hover:border-[#4A90E2] hover:shadow-[0_4px_16px_rgba(74,144,226,0.15)]"
+                      className="group/link flex items-center justify-center relative w-10 h-10 sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 bg-gradient-to-r from-[#F0F7FF] to-white border border-[#D4E4F7]/50 rounded-full text-[13px] font-medium text-[#2E5C8A] overflow-hidden transition-all duration-300 hover:border-[#4A90E2] hover:shadow-[0_4px_16px_rgba(74,144,226,0.15)] shrink-0"
                     >
-                      <span className="relative z-10">{social.name}</span>
+                      <span className="relative z-10 flex items-center gap-2">
+                        {social.icon}
+                        <span className="hidden sm:block">{social.name}</span>
+                      </span>
                       <div className="absolute inset-0 bg-gradient-to-r from-[#E8F1FF] to-[#F0F7FF] opacity-0 group-hover/link:opacity-100 transition-opacity duration-300" />
                     </a>
                   ))}
