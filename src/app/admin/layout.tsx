@@ -21,6 +21,7 @@ interface AuthMeResponse {
 const navItems = [
     { href: '/admin/societies', label: 'Societies', startsWith: '/admin/societies' },
     { href: '/admin/events', label: 'Events', startsWith: '/admin/events' },
+    { href: '/admin/members', label: 'Members', startsWith: '/admin/members' },
 ];
 
 export default function AdminLayout({
@@ -121,11 +122,10 @@ export default function AdminLayout({
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={`inline-flex min-w-[9.5rem] items-center rounded-xl px-4 py-2.5 text-sm font-semibold transition lg:flex lg:min-w-0 ${
-                                        isActive
+                                    className={`inline-flex min-w-[9.5rem] items-center rounded-xl px-4 py-2.5 text-sm font-semibold transition lg:flex lg:min-w-0 ${isActive
                                             ? 'bg-[#0b5ed7] text-white shadow-[0_10px_25px_rgba(11,94,215,0.25)]'
                                             : 'bg-[#f4f8ff] text-[#355988] hover:bg-[#e8f1ff] hover:text-[#0b5ed7]'
-                                    }`}
+                                        }`}
                                 >
                                     {item.label}
                                 </Link>

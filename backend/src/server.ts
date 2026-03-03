@@ -8,6 +8,7 @@ import eventRoutes from './routes/eventRoutes';
 import societyRoutes from './routes/societyRoutes';
 import authRoutes from './routes/authRoutes';
 import contactRoutes from './routes/contactRoutes';
+import memberRoutes from './routes/memberRoutes';
 import { connectDB, checkDatabaseHealth } from './config/db';
 import cookieParser from 'cookie-parser';
 
@@ -82,6 +83,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/societies', societyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/members', memberRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

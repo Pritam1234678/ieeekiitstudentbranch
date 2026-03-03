@@ -1,0 +1,68 @@
+import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import * as memberService from '../services/memberService';
+
+export async function getAllMembers(req: Request, res: Response) {
+  try {
+    const members = await memberService.getAllMembers();
+    res.json({ success: true, data: members });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch members' });
+  }
+}
+
+export async function getMemberById(req: Request, res: Response) {
+  try {
+    const member = await memberService.getMemberById(req.params.id);
+    if (!member) return res.status(404).json({ success: false, error: 'Member not found' });
+    res.json({ success: true, data: member });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch member' });
+  }
+}
+
+export async function createMember(req: Request, res: Response) {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+
+    const memberData = { ...req.body };
+    if (req.file) {
+      memberData.photo_url = `/uploads/members/${req.file.filename}`;
+    }
+
+    const memberId = await memberService.createMember(memberData);
+    res.status(201).json({ success: true, data: { id: memberId }, message: 'Member created successfully' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: 'Failed to create member', message: error.message });
+  }
+}
+
+export async function updateMember(req: Request, res: Response) {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+
+    const memberData = { ...req.body };
+    if (req.file) {
+      memberData.photo_url = `/uploads/members/${req.file.filename}`;
+    }
+
+    const updated = await memberService.updateMember(req.params.id, memberData);
+    if (!updated) return res.status(404).json({ success: false, error: 'Member not found' });
+
+    res.json({ success: true, message: 'Member updated successfully' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: 'Failed to update member', message: error.message });
+  }
+}
+
+export async function deleteMember(req: Request, res: Response) {
+  try {
+    const deleted = await memberService.deleteMember(req.params.id);
+    if (!deleted) return res.status(404).json({ success: false, error: 'Member not found' });
+    res.json({ success: true, message: 'Member deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to delete member' });
+  }
+}
