@@ -197,7 +197,7 @@ export default function MembersPage() {
           <button className="relative overflow-hidden group bg-white rounded-full px-12 py-5 shadow-[0_0_40px_rgba(255,255,255,0.25)] hover:shadow-[0_0_60px_rgba(255,255,255,0.35)] transition-all duration-300 transform hover:-translate-y-1">
             <div className="absolute inset-0 bg-[#1d4ed8] translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"></div>
             <span className="relative z-10 text-[#1d4ed8] group-hover:text-white tracking-wide text-base font-bold transition-colors duration-300">
-              Apply Now
+              Closed 
             </span>
           </button>
         </div>

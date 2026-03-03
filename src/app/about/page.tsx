@@ -10,10 +10,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Marquee from "@/components/layout/Marquee";
 
 const stats = [
-  { label: "Active Members", value: "240+" },
-  { label: "Annual Events", value: "35+" },
-  { label: "Awards Won", value: "18" },
-  { label: "Innovation Labs", value: "3" },
+  { label: "Active Members", value: "200+" },
+  { label: "Annual Events", value: "15+" },
+  { label: "Awards Won", value: "4" },
+  { label: "Innovation Labs", value: "1" },
 ];
 
 const timeline = [
