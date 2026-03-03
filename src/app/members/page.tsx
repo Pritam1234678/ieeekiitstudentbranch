@@ -192,7 +192,7 @@ export default function MembersPage() {
             Ready to shape the future?
           </h2>
           <p className="max-w-2xl text-[#cbd5e1] text-sm md:text-lg leading-relaxed font-medium mb-12">
-            Join a community of driven individuals hungry to learn, innovate, and master their craft. We're always looking for new talent.
+            Join a community of driven individuals hungry to learn, innovate, and master their craft. We&apos;re always looking for new talent.
           </p>
           <button className="relative overflow-hidden group bg-white rounded-full px-12 py-5 shadow-[0_0_40px_rgba(255,255,255,0.25)] hover:shadow-[0_0_60px_rgba(255,255,255,0.35)] transition-all duration-300 transform hover:-translate-y-1">
             <div className="absolute inset-0 bg-[#1d4ed8] translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"></div>
