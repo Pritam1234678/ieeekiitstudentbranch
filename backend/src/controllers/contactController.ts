@@ -19,10 +19,16 @@ export const submitContactForm = async (req: Request, res: Response) => {
         }
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASS,
+            },
+            // Force IPv4 in case the host environment (like Railway) lacks outbound IPv6 support
+            tls: {
+                servername: 'smtp.gmail.com',
             },
         });
 
