@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import nodemailer from 'nodemailer';
+import dns from 'dns';
 
 export const submitContactForm = async (req: Request, res: Response) => {
     try {
         const { name, email, subject, message } = req.body;
 
-        // Anti-spam basic check: ensure the request came from a browser with an Origin or Referer header
-        // and clearly has a User-Agent. This stops low-effort cURL scripts.
+        // Anti-spam basic check
         const origin = req.get('origin') || req.get('referer');
         const userAgent = req.get('user-agent');
         
@@ -18,20 +18,23 @@ export const submitContactForm = async (req: Request, res: Response) => {
             return res.status(400).json({ success: false, message: 'All fields are required.' });
         }
 
+        // --- IPv6 Bypass for Railway ---
+        // Railway drops outbound IPv6 packets but Node.js still tries to resolve Gmail via IPv6 (hanging for 120s).
+        // We manually lookup the IPv4 address and force Nodemailer to use it.
+        const { address: ipv4Address } = await dns.promises.lookup('smtp.gmail.com', { family: 4 });
+
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // true for 465, false for 587
+            host: ipv4Address,
+            port: 465,
+            secure: true, 
             auth: {
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASS,
             },
             tls: {
-                rejectUnauthorized: false
+                rejectUnauthorized: false,
+                servername: 'smtp.gmail.com', // Required because we are connecting to a raw IP
             },
-            // This tells Node's underlying net.Socket to only resolve IPv4.
-            // On environments like Railway that drop IPv6 packets, this prevents hangs.
-            ...({ family: 4 } as any)
         });
 
         const mailOptions = {
