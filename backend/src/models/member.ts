@@ -9,8 +9,8 @@ export enum MemberPosition {
   JOINT_TREASURER = 'Joint Treasurer',
   WEBMASTER = 'Webmaster',
   MEMBER = 'Member',
-  FACULTY = 'Faculty In Charge',
-  DIRECTOR = 'Director'
+  FACULTY = 'Faculty Advisor',
+  DIRECTOR = 'Counselor'
 }
 
 export interface IMember extends Document {
@@ -19,6 +19,7 @@ export interface IMember extends Document {
   linkedin?: string;
   photo_url?: string;
   position: MemberPosition;
+  rank?: number;  // Only for Faculty Advisor — rank 1 = highest
   created_at: Date;
   updated_at: Date;
 }
@@ -33,11 +34,21 @@ const MemberSchema = new Schema<IMember>(
       type: String,
       enum: Object.values(MemberPosition),
       required: true
+    },
+    rank: {
+      type: Number,
+      sparse: true, // allows multiple docs with no rank (non-faculty advisors)
     }
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
   }
+);
+
+// Unique index on rank scoped to Faculty Advisor position only
+MemberSchema.index(
+  { rank: 1 },
+  { unique: true, sparse: true, partialFilterExpression: { position: 'Faculty Advisor' } }
 );
 
 export const Member = mongoose.model<IMember>('Member', MemberSchema);

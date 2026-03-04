@@ -21,10 +21,10 @@ interface Member {
   position: string;
 }
 
-const rankMap: Record<string, number> = {
-  Director: 1,
-  "Faculty In Charge": 2,
-  Chair: 3,
+const hierarchyOrder: Record<string, number> = {
+  Counselor: 1,
+  "Faculty Advisor": 2,
+  Chairperson: 3,
   "Vice Chair": 4,
   Secretary: 5,
   "Joint Secretary": 6,
@@ -93,14 +93,26 @@ export default function MembersPage() {
     }
   }, [loading]);
 
-  const faculty = members
-    .filter((m) => ["Director", "Faculty In Charge"].includes(m.position))
-    .sort((a, b) => rankMap[a.position] - rankMap[b.position]);
+  // Counselors first, then Faculty Advisors sorted by rank
+  const leadership = members
+    .filter((m) => ["Counselor", "Faculty Advisor"].includes(m.position))
+    .sort((a, b) => {
+      // Counselors always first
+      if (a.position === 'Counselor' && b.position !== 'Counselor') return -1;
+      if (b.position === 'Counselor' && a.position !== 'Counselor') return 1;
+      // Faculty Advisors: sort by rank (null ranks go to end)
+      if (a.position === 'Faculty Advisor' && b.position === 'Faculty Advisor') {
+        const ra = (a as any).rank ?? Infinity;
+        const rb = (b as any).rank ?? Infinity;
+        return ra - rb;
+      }
+      return 0;
+    });
 
   const execBoard = members
     .filter((m) =>
       [
-        "Chair",
+        "Chairperson",
         "Vice Chair",
         "Secretary",
         "Treasurer",
@@ -109,13 +121,15 @@ export default function MembersPage() {
         "Webmaster",
       ].includes(m.position)
     )
-    .sort((a, b) => rankMap[a.position] - rankMap[b.position]);
+    .sort(
+      (a, b) => (hierarchyOrder[a.position] || 99) - (hierarchyOrder[b.position] || 99)
+    );
 
   const coreMembers = members.filter((m) => m.position === "Member");
 
   const teams = [];
-  if (faculty.length > 0) teams.push({ name: "Faculty Advisors", members: faculty });
-  if (execBoard.length > 0) teams.push({ name: "Executive Board", members: execBoard });
+  if (leadership.length > 0) teams.push({ name: "Faculty  Ex-com", members: leadership });
+  if (execBoard.length > 0) teams.push({ name: "Student  Ex-com", members: execBoard });
   if (coreMembers.length > 0) teams.push({ name: "Core Members", members: coreMembers });
 
   return (
@@ -197,7 +211,7 @@ export default function MembersPage() {
           <button className="relative overflow-hidden group bg-white rounded-full px-12 py-5 shadow-[0_0_40px_rgba(255,255,255,0.25)] hover:shadow-[0_0_60px_rgba(255,255,255,0.35)] transition-all duration-300 transform hover:-translate-y-1">
             <div className="absolute inset-0 bg-[#1d4ed8] translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"></div>
             <span className="relative z-10 text-[#1d4ed8] group-hover:text-white tracking-wide text-base font-bold transition-colors duration-300">
-              Closed 
+              Closed
             </span>
           </button>
         </div>
@@ -318,8 +332,8 @@ function ModernTeamSection({
 
               {/* Icon row */}
               <div className="flex items-center gap-3 mt-2">
-                {/* Faculty: Info icon → links to LinkedIn if available */}
-                {["Director", "Faculty In Charge"].includes(member.position) ? (
+                {/* Render Faculty info icon - only for Counselor/Faculty Advisor */}
+                {["Counselor", "Faculty Advisor"].includes(member.position) ? (
                   member.linkedin ? (
                     <a
                       href={member.linkedin}

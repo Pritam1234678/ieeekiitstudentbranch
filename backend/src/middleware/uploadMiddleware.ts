@@ -9,8 +9,8 @@ const ALLOWED: Record<string, string[]> = {
     'image/png':   ['.png'],
     'image/webp':  ['.webp'],
     'image/gif':   ['.gif'],
-    'image/heic':  ['.heic'],
-    'image/heif':  ['.heif'],
+    'image/heic':  ['.heic', '.heif'],
+    'image/heif':  ['.heif', '.heic'],
 };
 
 // Magic-byte signatures for supported formats
@@ -92,7 +92,7 @@ export const upload = multer({
     storage,
     limits: {
         fileSize: 25 * 1024 * 1024, // 25 MB
-        files: 1,                    // single file per request
+        files: 20,                   // allow up to 20 files per request for galleries
     },
     fileFilter,
 });
@@ -100,28 +100,38 @@ export const upload = multer({
 // --- Post-upload magic-byte validation middleware ---
 // Use AFTER upload.single() / upload.array() in your route chain.
 export function validateImageBytes(req: Request, res: Response, next: NextFunction) {
+    const files = (req as any).files as Express.Multer.File[] | undefined;
     const file = (req as any).file as Express.Multer.File | undefined;
-    if (!file) return next();
+    
+    const uploadedFiles = file ? [file] : (files && Array.isArray(files) ? files : []);
+    
+    if (uploadedFiles.length === 0) return next();
 
     try {
-        // Read only the first 12 bytes — enough for all our signatures
-        const fd = fs.openSync(file.path, 'r');
-        const buf = Buffer.alloc(12);
-        fs.readSync(fd, buf, 0, 12, 0);
-        fs.closeSync(fd);
+        for (const f of uploadedFiles) {
+            // Read only the first 12 bytes — enough for all our signatures
+            const fd = fs.openSync(f.path, 'r');
+            const buf = Buffer.alloc(12);
+            fs.readSync(fd, buf, 0, 12, 0);
+            fs.closeSync(fd);
 
-        if (!matchesMagicBytes(buf, file.mimetype)) {
-            fs.unlinkSync(file.path); // delete the suspicious file
-            return res.status(400).json({
-                success: false,
-                error: 'File content does not match its declared type. Upload rejected.',
-            });
+            if (!matchesMagicBytes(buf, f.mimetype)) {
+                // cleanup all files
+                for (const uf of uploadedFiles) {
+                    try { if (uf.path) fs.unlinkSync(uf.path); } catch {}
+                }
+                return res.status(400).json({
+                    success: false,
+                    error: `File ${f.originalname} content does not match its declared type. Upload rejected.`,
+                });
+            }
         }
-
         next();
     } catch (err) {
         // If we can't read it, reject it
-        try { if (file?.path) fs.unlinkSync(file.path); } catch {}
-        return res.status(500).json({ success: false, error: 'Failed to validate uploaded file.' });
+        for (const uf of uploadedFiles) {
+            try { if (uf.path) fs.unlinkSync(uf.path); } catch {}
+        }
+        return res.status(500).json({ success: false, error: 'Failed to validate uploaded file(s).' });
     }
 }

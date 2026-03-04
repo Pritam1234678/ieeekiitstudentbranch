@@ -22,8 +22,8 @@ const positionColorMap: Record<string, string> = {
     'Joint Secretary': 'bg-[#f4f8ff] border-[#d7e7ff] text-[#5a78a4]',
     'Joint Treasurer': 'bg-[#f4f8ff] border-[#d7e7ff] text-[#5a78a4]',
     'Webmaster': 'bg-[#eef5ff] border-[#c8ddff] text-[#0b5ed7]',
-    'Faculty In Charge': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
-    'Director': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
+    'Faculty Advisor': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
+    'Counselor': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
     'Member': 'bg-[#f8f9fa] border-[#e9ecef] text-[#495057]',
 };
 

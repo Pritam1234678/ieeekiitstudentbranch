@@ -13,9 +13,9 @@ const POSITIONS = [
     'Joint Secretary',
     'Joint Treasurer',
     'Webmaster',
-    'Member',
-    'Faculty In Charge',
-    'Director'
+    'Counselor',
+    'Faculty Advisor',
+    'Chairperson',
 ];
 
 export default function EditMember() {
@@ -30,6 +30,7 @@ export default function EditMember() {
         linkedin: '',
         position: 'Member',
         photo_url: '',
+        rank: '' as string | number,
     });
     const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -57,6 +58,7 @@ export default function EditMember() {
                         linkedin: member.linkedin || '',
                         position: member.position || 'Member',
                         photo_url: member.photo_url || '',
+                        rank: member.rank ?? '',
                     });
                 } else {
                     showToast(data.error || 'Failed to load member', 'error');
@@ -77,6 +79,8 @@ export default function EditMember() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    const isFacultyAdvisor = formData.position === 'Faculty Advisor';
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -106,6 +110,10 @@ export default function EditMember() {
             payload.append('fullname', formData.fullname);
             payload.append('email', formData.email);
             payload.append('position', formData.position);
+
+            if (isFacultyAdvisor && formData.rank !== '') {
+                payload.append('rank', String(formData.rank));
+            }
 
             if (formData.linkedin) payload.append('linkedin', formData.linkedin);
             if (imageFile) payload.append('photo', imageFile);
@@ -269,6 +277,29 @@ export default function EditMember() {
                                 ))}
                             </select>
                         </div>
+
+                        {/* Rank (Faculty Advisor only) */}
+                        {isFacultyAdvisor && (
+                            <div className="relative group md:col-span-1">
+                                <input
+                                    id="rank"
+                                    type="number"
+                                    name="rank"
+                                    min="1"
+                                    value={formData.rank}
+                                    onChange={handleChange}
+                                    className="peer w-full bg-transparent border-b-2 py-3 text-[#0A1A2F] outline-none transition-colors duration-300 placeholder-transparent border-[#D4E4F7] focus:border-[#0B5ED7]"
+                                    placeholder=" "
+                                />
+                                <label
+                                    htmlFor="rank"
+                                    className="absolute left-0 -top-3.5 text-xs font-medium transition-all duration-300 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:font-normal peer-focus:-top-3.5 peer-focus:text-xs peer-focus:font-medium text-[#0B5ED7] peer-placeholder-shown:text-[#94A3B8] peer-focus:text-[#0B5ED7]"
+                                >
+                                    Rank (1 = Most Senior)
+                                </label>
+                                <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-[#0B5ED7] transition-all duration-300 peer-focus:w-full" />
+                            </div>
+                        )}
 
                         {/* Image Upload */}
                         <div className="relative group md:col-span-1 flex flex-col justify-center">

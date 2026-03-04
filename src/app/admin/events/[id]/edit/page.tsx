@@ -24,7 +24,7 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
     const [currentImageUrl, setCurrentImageUrl] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [galleryImages, setGalleryImages] = useState<any[]>([]);
-    const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
+    const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -96,7 +96,16 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
 
     const handleGalleryFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            setGalleryFiles(e.target.files);
+            setGalleryFiles(Array.from(e.target.files));
+        }
+    };
+
+    const removeGalleryFile = (indexToRemove: number) => {
+        const newFiles = galleryFiles.filter((_, index) => index !== indexToRemove);
+        setGalleryFiles(newFiles);
+        if (newFiles.length === 0) {
+            const fileInput = document.getElementById('gallery_images') as HTMLInputElement;
+            if (fileInput) fileInput.value = '';
         }
     };
 
@@ -105,7 +114,7 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
         setUploadingGallery(true);
 
         const formData = new FormData();
-        Array.from(galleryFiles).forEach((file) => {
+        galleryFiles.forEach((file) => {
             formData.append('images', file);
         });
 
@@ -119,7 +128,7 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
             if (res.ok) {
                 const data = await res.json();
                 setGalleryImages([...data.data, ...galleryImages]);
-                setGalleryFiles(null);
+                setGalleryFiles([]);
                 // Reset file input
                 const fileInput = document.getElementById('gallery_images') as HTMLInputElement;
                 if (fileInput) fileInput.value = '';
@@ -518,24 +527,35 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
                         <button
                             type="button"
                             onClick={handleUploadGallery}
-                            disabled={uploadingGallery || !galleryFiles}
+                            disabled={uploadingGallery || galleryFiles.length === 0}
                             className="px-6 py-2 bg-[#0B5ED7] text-white rounded-full hover:bg-[#094bb3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {uploadingGallery ? 'Uploading...' : 'Upload'}
                         </button>
                     </div>
                     {/* Display Selected Files Preview */}
-                    {galleryFiles && galleryFiles.length > 0 && (
+                    {galleryFiles.length > 0 && (
                         <div className="mt-4 p-4 bg-[#F8FAFC] rounded-xl border border-[#D4E4F7]">
                             <h4 className="text-sm font-semibold text-[#0A1A2F] mb-3">Selected Files ({galleryFiles.length}):</h4>
                             <ul className="space-y-2">
-                                {Array.from(galleryFiles).map((file, index) => (
+                                {galleryFiles.map((file, index) => (
                                     <li key={index} className="flex items-center text-sm text-[#475569] bg-white px-3 py-2 rounded-lg border border-[#E2E8F0] shadow-sm">
                                         <svg className="w-4 h-4 mr-2 text-[#0B5ED7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                         <span className="truncate flex-1">{file.name}</span>
-                                        <span className="text-xs text-[#94A3B8] ml-2">({(file.size / 1024).toFixed(1)} KB)</span>
+                                        <span className="text-xs text-[#94A3B8] mx-3">({(file.size / 1024).toFixed(1)} KB)</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeGalleryFile(index)}
+                                            className="text-red-500 hover:text-red-700 p-1.5 rounded-full hover:bg-red-50 transition-colors"
+                                            title="Remove File"
+                                            aria-label="Remove File"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
                                     </li>
                                 ))}
                             </ul>

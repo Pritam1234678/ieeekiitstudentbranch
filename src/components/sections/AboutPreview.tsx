@@ -6,9 +6,9 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const stats = [
-  { value: 500, label: "Active Members", suffix: "+" },
-  { value: 120, label: "Events Conducted", suffix: "+" },
-  { value: 15, label: "Years of Excellence", suffix: "+" },
+  { value: 200, label: "Active Members", suffix: "+" },
+  { value: 50, label: "Events Conducted", suffix: "+" },
+  { value: 10, label: "Years of Excellence", suffix: "+" },
 ];
 
 const AboutPreview = () => {

@@ -11,14 +11,14 @@ import Marquee from "@/components/layout/Marquee";
 
 const stats = [
   { label: "Active Members", value: "200+" },
-  { label: "Annual Events", value: "15+" },
-  { label: "Awards Won", value: "4" },
+  { label: "Annual Events", value: "10+" },
+  { label: "Awards Won", value: "5" },
   { label: "Innovation Labs", value: "1" },
 ];
 
 const timeline = [
   {
-    year: "2011",
+    year: "2013",
     title: "Foundation",
     description:
       "IEEE KIIT Student Branch was established with a vision to create a platform for technical excellence and innovation.",

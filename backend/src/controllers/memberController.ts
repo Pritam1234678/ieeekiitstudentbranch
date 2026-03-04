@@ -34,7 +34,8 @@ export async function createMember(req: Request, res: Response) {
     const memberId = await memberService.createMember(memberData);
     res.status(201).json({ success: true, data: { id: memberId }, message: 'Member created successfully' });
   } catch (error: any) {
-    res.status(500).json({ success: false, error: 'Failed to create member', message: error.message });
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ success: false, error: error.message || 'Failed to create member' });
   }
 }
 
@@ -53,7 +54,8 @@ export async function updateMember(req: Request, res: Response) {
 
     res.json({ success: true, message: 'Member updated successfully' });
   } catch (error: any) {
-    res.status(500).json({ success: false, error: 'Failed to update member', message: error.message });
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ success: false, error: error.message || 'Failed to update member' });
   }
 }
 

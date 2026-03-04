@@ -2,6 +2,7 @@
 
 import { useEvents, useEventStats } from '@/lib/api/hooks';
 import { EventStatus } from '@/lib/api/types';
+import { getApiUrl } from '@/lib/api/config';
 
 /**
  * Example component showing how to use the event API
@@ -52,7 +53,7 @@ export function EventsList() {
                 {status}
               </span>
               {event.image_url && (
-                <img src={event.image_url} alt={event.title} />
+                <img src={getApiUrl(event.image_url)} alt={event.title} />
               )}
               <h3>{event.title}</h3>
               <p>{event.description}</p>

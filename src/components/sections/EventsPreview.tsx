@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEvents } from "@/lib/api/hooks";
 import { EventStatus } from "@/lib/api/types";
+import { getApiUrl } from "@/lib/api/config";
 
 const EventsPreview = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -144,7 +145,7 @@ const EventsPreview = () => {
                     {event.image_url ? (
                       <div className="relative w-full h-full">
                         <Image
-                          src={event.image_url}
+                          src={getApiUrl(event.image_url)}
                           alt={event.title}
                           fill
                           className="object-cover transition-transform duration-1000 ease-out"
@@ -193,30 +194,16 @@ const EventsPreview = () => {
                         <p className="text-white/70 text-sm sm:text-base md:text-lg mb-5 sm:mb-6 line-clamp-3 max-w-lg">
                           {event.description}
                         </p>
-                        {event.registration_link ? (
-                          <Link
-                            href={event.registration_link}
-                            target="_blank"
-                            className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs sm:text-sm font-medium transition-colors border border-white/10"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View Details
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </Link>
-                        ) : (
-                          <Link
-                            href="/events"
-                            className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs sm:text-sm font-medium transition-colors border border-white/10"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            Read More
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                          </Link>
-                        )}
+                        <Link
+                          href={`/events/${event.id}`}
+                          className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white text-xs sm:text-sm font-medium transition-colors border border-white/10"
+                          onClick={(e) => { e.stopPropagation(); }}
+                        >
+                          View Details
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </Link>
                       </div>
                     </motion.div>
                   </div>

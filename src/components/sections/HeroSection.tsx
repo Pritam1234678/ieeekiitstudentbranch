@@ -199,7 +199,7 @@ const HeroSection = () => {
             className="space-y-3 mb-8 sm:mb-12"
           >
             <p className="text-navy/60 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-normal px-2">
-              Fostering innovation, technical excellence, and professional development since 2010
+              Fostering innovation, technical excellence, and professional development since 2013
             </p>
           </motion.div>
 
