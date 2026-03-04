@@ -38,7 +38,7 @@ export default function TermsOfService() {
                             <section>
                                 <h2 className="text-2xl font-semibold text-navy mb-4">1. Agreement to Terms</h2>
                                 <p>
-                                    These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and IEEE KIIT Student Branch ("we," "us," or "our"), concerning your access to and use of our website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
+                                    These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&quot;you&quot;) and IEEE KIIT Student Branch (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), concerning your access to and use of our website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
                                 </p>
                                 <p className="mt-4">
                                     You agree that by accessing the site, you have read, understood, and agree to be bound by all of these Terms of Service. If you do not agree with all of these Terms of Service, then you are expressly prohibited from using the site and you must discontinue use immediately.
@@ -48,7 +48,7 @@ export default function TermsOfService() {
                             <section>
                                 <h2 className="text-2xl font-semibold text-navy mb-4">2. Intellectual Property Rights</h2>
                                 <p>
-                                    Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the "Content") and the trademarks, service marks, and logos contained therein (the "Marks") are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws.
+                                    Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the &quot;Content&quot;) and the trademarks, service marks, and logos contained therein (the &quot;Marks&quot;) are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws.
                                 </p>
                                 <p className="mt-4">
                                     Except as expressly provided in these Terms of Service, no part of the Site and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission.
