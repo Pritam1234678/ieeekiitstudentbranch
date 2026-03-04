@@ -22,30 +22,39 @@ export default function EventsPage() {
 
   const { events: allEvents, loading, error } = useEvents();
 
-  // Prefetch all images for instant loading
+  // Prefetch all images as soon as events are available — fires before render
   useEffect(() => {
-    if (allEvents && allEvents.length > 0) {
-      allEvents.forEach((event) => {
-        // 1. Preload main cover image
-        if (event.image_url) {
-          const img = new Image();
-          img.src = getApiUrl(event.image_url);
-        }
+    if (!allEvents || allEvents.length === 0) return;
 
-        // 2. Pre-fetch event details to get gallery images for HoverCarousel
-        fetch(getApiUrl(`/api/events/${event.id}`))
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success && data.data?.images?.length > 0) {
-              data.data.images.forEach((imgData: any) => {
-                const hoverImg = new Image();
-                hoverImg.src = getApiUrl(imgData.url);
-              });
-            }
-          })
-          .catch((err) => console.error("Prefetch failed for event:", event.id, err));
-      });
-    }
+    // Use a single batch to avoid flooding the network
+    const preloadQueue: string[] = [];
+
+    allEvents.forEach((event) => {
+      // 1. Queue cover image
+      if (event.image_url) {
+        preloadQueue.push(getApiUrl(event.image_url));
+      }
+      // 2. Prefetch event gallery images in the background
+      fetch(getApiUrl(`/api/events/${event.id}`))
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.data?.images?.length > 0) {
+            data.data.images.forEach((imgData: any) => {
+              const img = new window.Image();
+              img.src = getApiUrl(imgData.url);
+            });
+          }
+        })
+        .catch(() => { });
+    });
+
+    // Batch-load cover images using Image objects so browser caches them
+    preloadQueue.forEach((src, i) => {
+      const img = new window.Image();
+      // Give first few images high priority so they show instantly
+      (img as any).fetchpriority = i < 4 ? 'high' : 'low';
+      img.src = src;
+    });
   }, [allEvents]);
 
   const filteredEvents = useMemo(() => {
@@ -246,6 +255,9 @@ function EventCard({ event, index, isInView, formatDate, setGalleryEvent }: any)
                 src={getApiUrl(event.image_url)}
                 alt={event.title}
                 className="w-full h-full object-cover"
+                loading="eager"
+                decoding="async"
+                fetchPriority={index < 4 ? 'high' : 'low'}
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-[#0B3D91] via-[#0a1628] to-[#041024] flex items-center justify-center">

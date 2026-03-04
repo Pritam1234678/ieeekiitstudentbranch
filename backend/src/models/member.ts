@@ -9,7 +9,7 @@ export enum MemberPosition {
   JOINT_TREASURER = 'Joint Treasurer',
   WEBMASTER = 'Webmaster',
   MEMBER = 'Member',
-  FACULTY = 'Faculty Advisor',
+  FACULTY = 'Advisor',
   DIRECTOR = 'Counselor'
 }
 
@@ -19,7 +19,8 @@ export interface IMember extends Document {
   linkedin?: string;
   photo_url?: string;
   position: MemberPosition;
-  rank?: number;  // Only for Faculty Advisor — rank 1 = highest
+  rank?: number;
+  domain?: string;  // Optional domain/area of work (not needed for Chair/Faculty Advisor/Counselor)
   created_at: Date;
   updated_at: Date;
 }
@@ -38,7 +39,8 @@ const MemberSchema = new Schema<IMember>(
     rank: {
       type: Number,
       sparse: true, // allows multiple docs with no rank (non-faculty advisors)
-    }
+    },
+    domain: { type: String },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
@@ -48,7 +50,7 @@ const MemberSchema = new Schema<IMember>(
 // Unique index on rank scoped to Faculty Advisor position only
 MemberSchema.index(
   { rank: 1 },
-  { unique: true, sparse: true, partialFilterExpression: { position: 'Faculty Advisor' } }
+  { unique: true, sparse: true, partialFilterExpression: { position: 'Advisor' } }
 );
 
 export const Member = mongoose.model<IMember>('Member', MemberSchema);

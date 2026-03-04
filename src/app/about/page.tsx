@@ -340,7 +340,7 @@ export default function AboutPage() {
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                className="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-8 border-2 border-blue-100 hover:border-blue-300 transition-all duration-500 shadow-[0_8px_32px_rgba(11,94,215,0.1)]"
+                className="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-5 md:p-8 border-2 border-blue-100 hover:border-blue-300 transition-all duration-500 shadow-[0_8px_32px_rgba(11,94,215,0.1)]"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -350,11 +350,11 @@ export default function AboutPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
                   <div
-                    className="text-5xl md:text-6xl font-bold mb-3 bg-[linear-gradient(135deg,#0B5ED7_0%,#00629B_100%)] bg-clip-text text-transparent"
+                    className="text-3xl sm:text-4xl md:text-6xl font-bold mb-2 md:mb-3 bg-[linear-gradient(135deg,#0B5ED7_0%,#00629B_100%)] bg-clip-text text-transparent"
                   >
                     {stat.value}
                   </div>
-                  <div className="text-sm font-semibold uppercase tracking-widest text-blue-900/60">
+                  <div className="text-xs md:text-sm font-semibold uppercase tracking-widest text-blue-900/60">
                     {stat.label}
                   </div>
                 </div>
@@ -500,7 +500,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      
+
 
       <Footer />
     </main>

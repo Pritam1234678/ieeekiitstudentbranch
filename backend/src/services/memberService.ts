@@ -5,11 +5,11 @@ export async function getAllMembers(): Promise<IMember[]> {
 }
 
 export async function getFacultyAdvisors(): Promise<IMember[]> {
-  return await Member.find({ position: 'Faculty Advisor' }).sort({ rank: 1 });
+  return await Member.find({ position: 'Advisor' }).sort({ rank: 1 });
 }
 
 export async function getNextFacultyRank(): Promise<number> {
-  const top = await Member.findOne({ position: 'Faculty Advisor', rank: { $exists: true } }).sort({ rank: -1 });
+  const top = await Member.findOne({ position: 'Advisor', rank: { $exists: true } }).sort({ rank: -1 });
   return top && top.rank != null ? top.rank + 1 : 1;
 }
 
@@ -32,11 +32,11 @@ async function checkRankConflict(rank: number, excludeId?: string): Promise<void
 
 export async function createMember(memberData: Partial<IMember>): Promise<string> {
   // Auto-assign rank for Faculty Advisors if not provided
-  if (memberData.position === 'Faculty Advisor' && memberData.rank == null) {
+  if (memberData.position === 'Advisor' && memberData.rank == null) {
     memberData.rank = await getNextFacultyRank();
   }
   // Explicit rank provided — validate uniqueness
-  if (memberData.position === 'Faculty Advisor' && memberData.rank != null) {
+  if (memberData.position === 'Advisor' && memberData.rank != null) {
     await checkRankConflict(Number(memberData.rank));
   }
   const member = new Member(memberData);
@@ -46,12 +46,12 @@ export async function createMember(memberData: Partial<IMember>): Promise<string
 
 export async function updateMember(id: string, memberData: Partial<IMember>): Promise<boolean> {
   // If rank is being set for a Faculty Advisor, validate uniqueness (excluding self)
-  if (memberData.position === 'Faculty Advisor' && memberData.rank != null) {
+  if (memberData.position === 'Advisor' && memberData.rank != null) {
     await checkRankConflict(Number(memberData.rank), id);
   } else if (memberData.rank != null) {
     // Also check when position isn't being changed but rank is being set
     const current = await Member.findById(id);
-    if (current?.position === 'Faculty Advisor') {
+    if (current?.position === 'Advisor') {
       await checkRankConflict(Number(memberData.rank), id);
     }
   }

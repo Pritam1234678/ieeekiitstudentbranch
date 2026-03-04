@@ -19,12 +19,14 @@ interface Member {
   linkedin?: string;
   photo_url?: string;
   position: string;
+  rank?: number;
+  domain?: string;
 }
 
 const hierarchyOrder: Record<string, number> = {
   Counselor: 1,
   "Faculty Advisor": 2,
-  Chairperson: 3,
+  Chair: 3,
   "Vice Chair": 4,
   Secretary: 5,
   "Joint Secretary": 6,
@@ -95,13 +97,13 @@ export default function MembersPage() {
 
   // Counselors first, then Faculty Advisors sorted by rank
   const leadership = members
-    .filter((m) => ["Counselor", "Faculty Advisor"].includes(m.position))
+    .filter((m) => ["Counselor", "Advisor"].includes(m.position))
     .sort((a, b) => {
       // Counselors always first
       if (a.position === 'Counselor' && b.position !== 'Counselor') return -1;
       if (b.position === 'Counselor' && a.position !== 'Counselor') return 1;
       // Faculty Advisors: sort by rank (null ranks go to end)
-      if (a.position === 'Faculty Advisor' && b.position === 'Faculty Advisor') {
+      if (a.position === 'Advisor' && b.position === 'Advisor') {
         const ra = (a as any).rank ?? Infinity;
         const rb = (b as any).rank ?? Infinity;
         return ra - rb;
@@ -112,7 +114,7 @@ export default function MembersPage() {
   const execBoard = members
     .filter((m) =>
       [
-        "Chairperson",
+        "Chair",
         "Vice Chair",
         "Secretary",
         "Treasurer",
@@ -128,8 +130,8 @@ export default function MembersPage() {
   const coreMembers = members.filter((m) => m.position === "Member");
 
   const teams = [];
-  if (leadership.length > 0) teams.push({ name: "Faculty  Ex-com", members: leadership });
-  if (execBoard.length > 0) teams.push({ name: "Student  Ex-com", members: execBoard });
+  if (leadership.length > 0) teams.push({ name: "Faculty Steering Committee", members: leadership });
+  if (execBoard.length > 0) teams.push({ name: "Student Executive Committee", members: execBoard });
   if (coreMembers.length > 0) teams.push({ name: "Core Members", members: coreMembers });
 
   return (
@@ -326,14 +328,20 @@ function ModernTeamSection({
               <h3 className="text-[1.4rem] font-bold tracking-tight text-[#0f172a] mb-1 leading-snug group-hover:text-[#2563eb] transition-colors duration-300">
                 {member.fullname}
               </h3>
-              <p className="text-[#64748b] text-[15px] font-semibold tracking-wide mb-6">
+              <p className="text-[#64748b] text-[15px] font-semibold tracking-wide mb-2">
                 {member.position}
               </p>
+              {/* Domain tag — shown only if domain exists */}
+              {(member as any).domain && (
+                <span className="inline-block px-3 py-1 mb-4 rounded-full bg-blue-50 border border-blue-100 text-[#3b82f6] text-xs font-semibold tracking-wide">
+                  {(member as any).domain}
+                </span>
+              )}
 
               {/* Icon row */}
               <div className="flex items-center gap-3 mt-2">
                 {/* Render Faculty info icon - only for Counselor/Faculty Advisor */}
-                {["Counselor", "Faculty Advisor"].includes(member.position) ? (
+                {["Counselor", "Advisor"].includes(member.position) ? (
                   member.linkedin ? (
                     <a
                       href={member.linkedin}

@@ -12,6 +12,7 @@ interface Member {
     linkedin?: string;
     photo_url?: string;
     position: string;
+    domain?: string;
 }
 
 const positionColorMap: Record<string, string> = {
@@ -22,7 +23,7 @@ const positionColorMap: Record<string, string> = {
     'Joint Secretary': 'bg-[#f4f8ff] border-[#d7e7ff] text-[#5a78a4]',
     'Joint Treasurer': 'bg-[#f4f8ff] border-[#d7e7ff] text-[#5a78a4]',
     'Webmaster': 'bg-[#eef5ff] border-[#c8ddff] text-[#0b5ed7]',
-    'Faculty Advisor': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
+    'Advisor': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
     'Counselor': 'bg-[#fff5f5] border-[#ffd6d6] text-[#d70b0b]',
     'Member': 'bg-[#f8f9fa] border-[#e9ecef] text-[#495057]',
 };
@@ -49,6 +50,11 @@ function MemberCard({
                 <span className={`rounded-full border px-3 py-1 text-xs font-semibold tracking-wide ${tagStyle}`}>
                     {member.position}
                 </span>
+                {member.domain && (
+                    <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-[#3b82f6]">
+                        {member.domain}
+                    </span>
+                )}
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => onDelete(member._id)}

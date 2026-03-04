@@ -23,14 +23,24 @@ export default function GalleryCarousel({ eventId, eventTitle, onClose }: Galler
     const [isDragging, setIsDragging] = useState(false);
     const constraintsRef = useRef<HTMLDivElement>(null);
 
-    // Fetch gallery images
+    // Fetch gallery images + preload all into browser cache
     useEffect(() => {
         const fetchImages = async () => {
             try {
                 const res = await fetch(getApiUrl(`/api/events/${eventId}`));
                 const data = await res.json();
                 if (data.success && data.data.images?.length > 0) {
-                    setImages(data.data.images);
+                    const imgs: GalleryImage[] = data.data.images;
+                    setImages(imgs);
+
+                    // Preload every image so navigating between them is instant
+                    imgs.forEach((imgData, i) => {
+                        const preloadImg = new window.Image();
+                        // First visible image gets high priority; rest load in background
+                        (preloadImg as any).fetchpriority = i === 0 ? 'high' : 'auto';
+                        preloadImg.decoding = 'async';
+                        preloadImg.src = getApiUrl(imgData.url);
+                    });
                 }
             } catch (e) {
                 console.error('Failed to fetch gallery', e);
