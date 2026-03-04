@@ -51,8 +51,8 @@ export async function POST(req: Request) {
             <tr>
               <td align="center" style="padding: 40px 20px;">
                 
-                <!-- Main Glass Card - Expanded Width -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="max-width:800px; width:100%; background:rgba(10, 15, 30, 0.75); backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px); border:1px solid rgba(255, 255, 255, 0.1); border-radius:24px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);">
+                <!-- Main Glass Card - Full Width Edge-to-Edge -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="width:100%; max-width:100%; background:rgba(10, 15, 30, 0.75); backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px); border:1px solid rgba(255, 255, 255, 0.1); border-radius:24px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);">
         
                   <!-- Header -->
                   <tr>
