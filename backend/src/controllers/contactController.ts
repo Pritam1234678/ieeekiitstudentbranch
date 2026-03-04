@@ -21,15 +21,17 @@ export const submitContactForm = async (req: Request, res: Response) => {
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 587,
-            secure: false, // true for 465, false for other ports (will upgrade connection via STARTTLS)
+            secure: false, // true for 465, false for 587
             auth: {
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASS,
             },
-            // Force IPv4 in case the host environment (like Railway) lacks outbound IPv6 support
             tls: {
-                servername: 'smtp.gmail.com',
+                rejectUnauthorized: false
             },
+            // This tells Node's underlying net.Socket to only resolve IPv4.
+            // On environments like Railway that drop IPv6 packets, this prevents hangs.
+            ...({ family: 4 } as any)
         });
 
         const mailOptions = {
