@@ -43,98 +43,90 @@ export async function POST(req: Request) {
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
           <title>Contact Form Submission</title>
+          <!-- Keep styling inline for best email client support -->
         </head>
-        <body style="margin:0;padding:0;background-color:#020617;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <body style="margin:0;padding:0;background-color:#050914;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';-webkit-font-smoothing:antialiased;">
           
-          <!-- Full Page Outer Container -->
-          <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#020617; background-image:url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1920&auto=format&fit=crop'); background-size:cover; background-position:center; min-height:100vh;">
+          <!-- Outer Background Container -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#050914; background-image:url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1920&auto=format&fit=crop'); background-size:cover; background-position:center; padding:40px 16px;">
             <tr>
-              <td align="center" style="padding: 60px 20px;">
+              <td align="center">
                 
-                <!-- Main Glass Card - Centered & Boxed -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="max-width:640px; width:100%; background:rgba(15, 23, 42, 0.65); backdrop-filter:blur(40px); -webkit-backdrop-filter:blur(40px); border:1px solid rgba(255, 255, 255, 0.08); border-radius:32px; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,0.8), inset 0 2px 0 rgba(255,255,255,0.05); margin: 0 auto;">
+                <!-- Main Glass Card -->
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background:rgba(18, 25, 43, 0.7); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255, 255, 255, 0.08); border-radius:24px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);">
         
                   <!-- Header -->
                   <tr>
-                    <td style="padding:56px 48px 40px; text-align:center; border-bottom:1px solid rgba(255, 255, 255, 0.05); background:linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0) 100%);">
-                      <!-- Magical AI Badge -->
-                      <div style="display:inline-block; margin-bottom:24px; padding:16px; background:linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border-radius:50%; box-shadow:0 0 30px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255,255,255,0.1); border:1px solid rgba(56, 189, 248, 0.2);">
-                        <img src="https://cdn-icons-png.flaticon.com/512/9306/9306630.png" alt="AI Core" width="44" height="44" style="display:block; margin:0 auto; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.9));" />
+                    <td style="padding:48px 40px 32px; text-align:center; border-bottom:1px solid rgba(255, 255, 255, 0.05); background:linear-gradient(180deg, rgba(37, 99, 235, 0.1) 0%, rgba(18, 25, 43, 0) 100%);">
+                      <!-- Decorative AI Glow -->
+                      <div style="display:inline-block; margin-bottom:16px;">
+                        <img src="https://img.icons8.com/?size=100&id=GvD7aIDq5B9s&format=png&color=3B82F6" alt="AI Icon" width="40" height="40" style="display:block; margin:0 auto;" />
                       </div>
-                      
-                      <div style="margin-bottom:12px;">
-                        <span style="font-size:12px; font-weight:700; letter-spacing:0.4em; text-transform:uppercase; color:#38BDF8; background:rgba(56, 189, 248, 0.1); padding:6px 16px; border-radius:30px; border:1px solid rgba(56, 189, 248, 0.2);">IEEE KIIT Automation</span>
-                      </div>
-                      
-                      <!-- Gradient Text manually simulated with text shadow for email support of bright white -->
-                      <h1 style="margin:0; font-size:34px; font-weight:800; color:#FFFFFF; letter-spacing:-0.03em; line-height:1.2; text-shadow:0 2px 15px rgba(255,255,255,0.3);">Incoming Transmission</h1>
-                      <p style="margin:16px 0 0; font-size:15px; color:#94A3B8; font-weight:400;">A secure message has bypassed the firewall.</p>
+                      <p style="margin:0 0 12px; font-size:12px; font-weight:600; letter-spacing:0.3em; text-transform:uppercase; color:#60A5FA;">IEEE KIIT Student Branch</p>
+                      <h1 style="margin:0; font-size:28px; font-weight:700; color:#FFFFFF; letter-spacing:-0.03em; line-height:1.2;">Incoming Transmission</h1>
+                      <p style="margin:12px 0 0; font-size:15px; color:#94A3B8; font-weight:400;">A new high-priority message has arrived via the portal.</p>
                     </td>
                   </tr>
         
                   <!-- Body Content -->
                   <tr>
-                    <td style="padding:48px;">
+                    <td style="padding:40px;">
         
-                      <!-- Sender Info Grid -->
+                      <!-- Sender Info Grid (Vertical on very small, side-by-side on desktop) -->
                       <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
                         <tr>
                           <!-- Name block -->
                           <td width="50%" style="padding:0 8px 16px 0; vertical-align:top;">
-                            <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.06); border-radius:20px; padding:24px; height: 100%; box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);">
-                              <div style="display:inline-block; padding:6px 10px; background:rgba(248, 113, 113, 0.1); border-radius:8px; margin-bottom:12px;">
-                                <span style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.15em; color:#F87171;">Sender ID</span>
-                              </div>
-                              <p style="margin:0; font-size:18px; font-weight:700; color:#F8FAFC;">${name}</p>
+                            <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.06); border-radius:16px; padding:20px;">
+                              <p style="margin:0 0 6px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.15em; color:#64748B;">Sender Identity</p>
+                              <p style="margin:0; font-size:16px; font-weight:600; color:#F8FAFC;">${name}</p>
                             </div>
                           </td>
                           <!-- Email block -->
                           <td width="50%" style="padding:0 0 16px 8px; vertical-align:top;">
-                            <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.06); border-radius:20px; padding:24px; height: 100%; box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);">
-                              <div style="display:inline-block; padding:6px 10px; background:rgba(96, 165, 250, 0.1); border-radius:8px; margin-bottom:12px;">
-                                <span style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.15em; color:#60A5FA;">Return Path</span>
-                              </div>
-                              <br>
-                              <a href="mailto:${email}" style="margin:0; font-size:16px; font-weight:600; color:#38BDF8; text-decoration:none; word-break:break-all;">${email}</a>
+                            <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.06); border-radius:16px; padding:20px;">
+                              <p style="margin:0 0 6px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.15em; color:#64748B;">Return Address</p>
+                              <a href="mailto:${email}" style="margin:0; font-size:16px; font-weight:500; color:#3B82F6; text-decoration:none; word-break:break-all;">${email}</a>
                             </div>
                           </td>
                         </tr>
                       </table>
         
                       <!-- Subject -->
-                      <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.06); border-radius:20px; padding:28px; margin-bottom:32px; box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);">
-                        <p style="margin:0 0 8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.2em; color:#64748B;">Directive / Subject</p>
-                        <p style="margin:0; font-size:20px; font-weight:600; color:#F1F5F9;">${subject}</p>
+                      <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.06); border-radius:16px; padding:20px; margin-bottom:32px;">
+                        <p style="margin:0 0 6px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.15em; color:#64748B;">Subject Directive</p>
+                        <p style="margin:0; font-size:18px; font-weight:500; color:#E2E8F0;">${subject}</p>
                       </div>
         
                       <!-- Message -->
                       <div style="position:relative;">
-                        <p style="margin:0 0 12px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.2em; color:#64748B; padding-left:4px;">Decrypted Payload</p>
-                        <div style="background:rgba(2, 6, 23, 0.6); border:1px solid rgba(56, 189, 248, 0.2); border-left:4px solid #38BDF8; border-radius:12px 24px 24px 12px; padding:32px; box-shadow:inset 0 4px 20px rgba(0,0,0,0.5);">
-                          <p style="margin:0; font-size:16px; line-height:1.8; color:#CBD5E1; white-space:pre-wrap; font-family:'Inter', sans-serif;">${message.replace(/\n/g, '<br>')}</p>
+                        <p style="margin:0 0 12px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.15em; color:#64748B; padding-left:4px;">Decrypted Payload</p>
+                        <div style="background:rgba(15, 23, 42, 0.6); border:1px solid rgba(59, 130, 246, 0.2); border-left:4px solid #3B82F6; border-radius:8px 16px 16px 8px; padding:24px; box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);">
+                          <p style="margin:0; font-size:16px; line-height:1.7; color:#CBD5E1; white-space:pre-wrap; font-family:'Inter', sans-serif;">${message.replace(/\n/g, '<br>')}</p>
                         </div>
                       </div>
         
                       <!-- Reply CTA -->
-                      <div style="margin-top:56px; text-align:center;">
+                      <div style="margin-top:40px; text-align:center;">
                         <a href="mailto:${email}?subject=Re: ${subject.replace(/"/g, '')}"
-                           style="display:inline-block; background:linear-gradient(135deg, #0284C7 0%, #2563EB 100%); color:#FFFFFF; font-size:16px; font-weight:700; text-decoration:none; padding:20px 56px; border-radius:50px; letter-spacing:0.05em; border:1px solid rgba(255,255,255,0.2); box-shadow:0 10px 40px rgba(2, 132, 199, 0.5), inset 0 2px 4px rgba(255,255,255,0.3); transition:all 0.3s ease;">
-                          <span style="display:inline-block; vertical-align:middle; margin-right:8px; font-size: 18px;">⟲</span> Initialize Response
+                           style="display:inline-block; background:linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); color:#FFFFFF; font-size:15px; font-weight:600; text-decoration:none; padding:16px 40px; border-radius:50px; letter-spacing:0.02em; border:1px solid rgba(255,255,255,0.1); box-shadow:0 8px 24px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.2); transition:all 0.3s ease;">
+                          <span style="display:inline-block; vertical-align:middle; margin-right:8px;">↩</span> Initiate Reply
                         </a>
+                        <p style="margin:16px 0 0; font-size:13px; color:#64748B;">Direct response channel active. Click to reply securely.</p>
                       </div>
                     </td>
                   </tr>
         
                   <!-- Footer -->
                   <tr>
-                    <td style="background:rgba(2, 6, 23, 0.85); border-top:1px solid rgba(255, 255, 255, 0.05); padding:32px 48px; text-align:center;">
+                    <td style="background:rgba(15, 23, 42, 0.8); border-top:1px solid rgba(255, 255, 255, 0.05); padding:32px 40px; text-align:center;">
                       <div style="margin-bottom:16px;">
-                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#38BDF8; margin:0 4px; vertical-align:middle; box-shadow:0 0 12px #38BDF8;"></span>
-                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#38BDF8; margin:0 4px; vertical-align:middle; box-shadow:0 0 12px #38BDF8; opacity:0.4;"></span>
-                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#38BDF8; margin:0 4px; vertical-align:middle; box-shadow:0 0 12px #38BDF8; opacity:0.1;"></span>
+                        <span style="display:inline-block; width:4px; height:4px; border-radius:50%; background:#3B82F6; margin:0 4px; vertical-align:middle; box-shadow:0 0 8px #3B82F6;"></span>
+                        <span style="display:inline-block; width:4px; height:4px; border-radius:50%; background:#3B82F6; margin:0 4px; vertical-align:middle; box-shadow:0 0 8px #3B82F6; opacity:0.5;"></span>
+                        <span style="display:inline-block; width:4px; height:4px; border-radius:50%; background:#3B82F6; margin:0 4px; vertical-align:middle; box-shadow:0 0 8px #3B82F6; opacity:0.25;"></span>
                       </div>
-                      <p style="margin:0 0 6px; font-size:13px; font-weight:700; color:#475569; letter-spacing:0.15em; text-transform:uppercase;">End of Message Cycle</p>
-                      <p style="margin:0; font-size:12px; color:#334155; line-height:1.6;">Automated notification via IEEE KIIT Server Core.<br>System Online.</p>
+                      <p style="margin:0 0 6px; font-size:14px; font-weight:600; color:#94A3B8; letter-spacing:0.05em;">SYSTEM AUTOMATION</p>
+                      <p style="margin:0; font-size:12px; color:#475569; line-height:1.5;">Generated by IEEE KIIT Server Core.<br>End of transmission.</p>
                     </td>
                   </tr>
         
@@ -161,4 +153,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
