@@ -11,6 +11,11 @@ import contactRoutes from './routes/contactRoutes';
 import memberRoutes from './routes/memberRoutes';
 import { connectDB, checkDatabaseHealth } from './config/db';
 import cookieParser from 'cookie-parser';
+import dns from 'node:dns';
+
+// Force Node.js to prefer IPv4 globally. Railway outbound IPv6 is not supported
+// and causes nodemailer to hang for 120s when connecting to smtp.gmail.com.
+dns.setDefaultResultOrder('ipv4first');
 
 dotenv.config();
 
