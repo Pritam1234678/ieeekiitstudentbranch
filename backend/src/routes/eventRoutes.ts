@@ -62,7 +62,7 @@ router.put(
 );
 
 // Image Gallery Routes — must be BEFORE /:id routes to avoid shadowing
-router.post('/:id/images', authenticateToken, upload.array('images', 10), uploadEventImages);
+router.post('/:id/images', authenticateToken, upload.array('images', 100), uploadEventImages);
 router.delete('/images/:imageId', authenticateToken, deleteEventImage);
 
 router.delete('/:id', authenticateToken, deleteEvent);

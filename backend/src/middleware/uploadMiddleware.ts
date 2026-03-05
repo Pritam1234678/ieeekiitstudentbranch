@@ -92,7 +92,7 @@ export const upload = multer({
     storage,
     limits: {
         fileSize: 25 * 1024 * 1024, // 25 MB
-        files: 20,                   // allow up to 20 files per request for galleries
+        files: 100,                  // allow up to 100 files per request for galleries
     },
     fileFilter,
 });
