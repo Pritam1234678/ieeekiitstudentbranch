@@ -246,12 +246,19 @@ export default function GalleryCarousel({ eventId, eventTitle, onClose }: Galler
                                         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
                                     >
                                         {/* Image frame */}
-                                        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/60 border border-white/10">
+                                        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/60 border border-white/10 bg-white/5 min-h-[300px] md:min-h-[500px] flex items-center justify-center">
+                                            {/* Loading Skeleton */}
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-white/10 animate-pulse -z-10" />
+
                                             <img
                                                 src={getApiUrl(images[active].url)}
                                                 alt={`Gallery image ${active + 1}`}
-                                                className="w-full max-h-[55vh] object-cover"
+                                                className="w-full max-h-[75vh] object-contain transition-opacity duration-500 opacity-0"
                                                 draggable={false}
+                                                onLoad={(e) => {
+                                                    e.currentTarget.classList.remove('opacity-0');
+                                                    e.currentTarget.classList.add('opacity-100');
+                                                }}
                                             />
                                             {/* Subtle glass overlay on image */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/5 pointer-events-none" />
@@ -327,8 +334,12 @@ export default function GalleryCarousel({ eventId, eventTitle, onClose }: Galler
                                     <img
                                         src={getApiUrl(img.url)}
                                         alt={`Thumbnail ${i + 1}`}
-                                        className="w-14 h-14 object-cover"
+                                        className="w-14 h-14 object-cover transition-opacity duration-300 opacity-0 bg-white/5"
                                         draggable={false}
+                                        onLoad={(e) => {
+                                            e.currentTarget.classList.remove('opacity-0');
+                                            e.currentTarget.classList.add('opacity-100');
+                                        }}
                                     />
                                     {/* Active indicator */}
                                     {i === active && (
