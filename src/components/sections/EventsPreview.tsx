@@ -120,7 +120,7 @@ const EventsPreview = () => {
 
         {/* Interactive Gallery */}
         <LayoutGroup>
-          <div className="flex flex-col md:flex-row gap-4 md:h-[600px] w-full">
+          <div className="flex flex-col md:flex-row gap-3 h-[620px] sm:h-[700px] md:h-[600px] w-full">
             {events.map((event, index) => {
               const isActive = activeId === event.id;
 
@@ -133,11 +133,11 @@ const EventsPreview = () => {
                   onClick={() => setActiveId(event.id)}
                   onMouseEnter={() => handleHoverActivate(event.id)}
                   onFocus={() => setActiveId(event.id)}
-                  className={`relative rounded-[32px] overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]
-                                        min-h-[140px] sm:min-h-[180px] md:min-h-0
+                  className={`relative rounded-[28px] overflow-hidden cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]
                                         ${isActive
-                      ? 'opacity-100 min-h-[280px] sm:min-h-[340px] md:min-h-0 md:flex-[3]'
-                      : 'opacity-90 md:opacity-60 md:flex-[0.5] hover:opacity-100 md:hover:flex-[0.8]'}
+                      ? 'flex-[3] opacity-100'
+                      : 'flex-[1] md:flex-[0.5] opacity-80 hover:opacity-100 md:hover:flex-[0.8]'
+                    }
                                     `}
                 >
                   {/* Event Image / Gradient */}
