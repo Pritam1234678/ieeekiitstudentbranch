@@ -4,6 +4,7 @@ import * as eventService from '../services/eventService';
 import { EventStatus } from '../models/event';
 import fs from 'fs';
 import path from 'path';
+import { deleteFile } from '../utils/fileUtils';
 
 export async function getAllEvents(req: Request, res: Response) {
   try {
@@ -153,6 +154,8 @@ export async function updateEvent(req: Request, res: Response) {
     }
 
     const eventData = req.body;
+    const currentEvent = await eventService.getEventById(eventId);
+
     if (req.body.managed_by) {
       try {
         eventData.managed_by = JSON.parse(req.body.managed_by);
@@ -163,6 +166,13 @@ export async function updateEvent(req: Request, res: Response) {
 
     if (req.file) {
       eventData.image_url = `/uploads/events/${req.file.filename}`;
+      if (currentEvent && currentEvent.image_url) {
+        deleteFile(currentEvent.image_url);
+      }
+    } else if (eventData.image_url === '') {
+      if (currentEvent && currentEvent.image_url) {
+         deleteFile(currentEvent.image_url);
+      }
     }
 
     const updated = await eventService.updateEvent(eventId, eventData);
@@ -215,13 +225,24 @@ export async function uploadEventImages(req: Request, res: Response) {
 export async function deleteEventImage(req: Request, res: Response) {
   try {
     const imageId = req.params.imageId;
-    // Ideally we should also delete the file from disk here or in service
-    // For now, just removing DB record
+    
+    // Use Mongoose directly to get the image URL before deleting
+    // Alternatively, a new service method could be created, but this works cleanly
+    const EventImage = require('../models/EventImage').default;
+    const image = await EventImage.findById(imageId);
+
+    if (!image) {
+        return res.status(404).json({ success: false, error: 'Image not found' });
+    }
+
     const result = await eventService.removeEventImage(imageId);
 
     if (!result) {
-        return res.status(404).json({ success: false, error: 'Image not found' });
+        return res.status(500).json({ success: false, error: 'Failed to delete image record' });
     }
+
+    // Actually delete the file from the filesystem
+    deleteFile(image.url);
 
     res.json({ success: true, message: 'Image deleted successfully' });
   } catch (error) {
@@ -246,12 +267,27 @@ export async function deleteEvent(req: Request, res: Response) {
       });
     }
 
+    const currentEvent = await eventService.getEventById(eventId);
+    const eventImages = await eventService.getEventImages(eventId);
+
     const deleted = await eventService.deleteEvent(eventId);
 
     if (!deleted) {
       return res.status(404).json({
         success: false,
         error: 'Event not found',
+      });
+    }
+
+    // Clean up main poster
+    if (currentEvent && currentEvent.image_url) {
+      deleteFile(currentEvent.image_url);
+    }
+
+    // Clean up gallery images
+    if (eventImages && eventImages.length > 0) {
+      eventImages.forEach(img => {
+        deleteFile(img.url);
       });
     }
 
