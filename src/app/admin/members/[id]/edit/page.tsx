@@ -122,6 +122,9 @@ export default function EditMember() {
             }
 
             if (formData.linkedin) payload.append('linkedin', formData.linkedin);
+            if (!imageFile && formData.photo_url === '') {
+                payload.append('photo_url', ''); // Tell backend to remove the photo
+            }
             if (imageFile) payload.append('photo', imageFile);
 
             const res = await fetch(getApiUrl(`/api/members/${memberId}`), {
@@ -332,16 +335,52 @@ export default function EditMember() {
                         {/* Image Upload */}
                         <div className="relative group md:col-span-1 flex flex-col justify-center">
                             <label className="block text-sm font-medium text-[#0B5ED7] mb-2">
-                                Replace Profile Photo
+                                Profile Photo
                             </label>
+
+                            {/* Current photo preview with remove option */}
                             {formData.photo_url && !imageFile && (
-                                <div className="mb-2 text-xs text-slate-500 flex items-center gap-2">
-                                    <div className="h-8 w-8 rounded-full overflow-hidden border">
+                                <div className="mb-4 relative inline-block w-max">
+                                    <div className="h-24 w-24 rounded-2xl overflow-hidden border-2 border-[#D4E4F7] shadow-sm">
                                         <img src={getApiUrl(formData.photo_url)} alt="Current profile" className="h-full w-full object-cover" />
                                     </div>
-                                    Current photo active
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, photo_url: '' }))}
+                                        className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 hover:scale-110 transition-all z-10"
+                                        title="Remove photo"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
                             )}
+
+                            {/* New localized photo preview with remove option */}
+                            {imageFile && (
+                                <div className="mb-4 relative inline-block w-max">
+                                    <div className="h-24 w-24 rounded-2xl overflow-hidden border-2 border-[#D4E4F7] shadow-sm">
+                                        <img src={URL.createObjectURL(imageFile)} alt="New profile" className="h-full w-full object-cover" />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setImageFile(null);
+                                            // Reset the input field so same file can be selected again
+                                            const fileInput = document.getElementById('photo') as HTMLInputElement;
+                                            if (fileInput) fileInput.value = '';
+                                        }}
+                                        className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 hover:scale-110 transition-all z-10"
+                                        title="Remove selected photo"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            )}
+
                             <input
                                 id="photo"
                                 type="file"
