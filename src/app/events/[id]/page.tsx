@@ -308,7 +308,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                         <div className="p-8 border-b-2 border-[#0B3D91]/20 bg-[#0A1A2F] text-white">
                             <p className="font-mono text-xs uppercase tracking-widest text-[#4A90E2] mb-3">Emergency Contact</p>
                             <a href={`tel:${event.contact_details || '7608976946'}`} className="group flex items-center gap-3 w-fit">
-                                <span className="text-3xl font-black tracking-tighter group-hover:text-[#4A90E2] transition-colors">+91 {event.contact_details || '7608976946'}</span>
+                                <span className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter group-hover:text-[#4A90E2] transition-colors">+91 {event.contact_details || '7608976946'}</span>
                                 <svg className="w-8 h-8 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all group-hover:text-[#4A90E2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>
