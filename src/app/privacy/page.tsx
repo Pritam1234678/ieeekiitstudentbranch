@@ -104,7 +104,7 @@ export default function PrivacyPolicy() {
                                         {[
                                             { label: "Identity Data", desc: "First name, last name, username or similar identifier" },
                                             { label: "Contact Data", desc: "Email address and telephone numbers" },
-                                            { label: "Technical Data", desc: "IP address, browser type, time zone & location" },
+                                           
                                             { label: "Profile Data", desc: "Interests, preferences, feedback and survey responses" },
                                             { label: "Usage Data", desc: "How you use our website, products and services" },
                                         ].map((item) => (
