@@ -30,6 +30,7 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
     const [submitting, setSubmitting] = useState(false);
     const [uploadingGallery, setUploadingGallery] = useState(false);
     const [errors, setErrors] = useState<ValidationError[]>([]);
+    const [confirmModal, setConfirmModal] = useState<{ visible: boolean; imageId: string | null }>({ visible: false, imageId: null });
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
     const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -143,15 +144,19 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
         }
     };
 
-    const handleDeleteGalleryImage = async (imageId: string) => {
-        if (!confirm('Are you sure you want to delete this image?')) return;
+    const handleDeleteGalleryImage = (imageId: string) => {
+        setConfirmModal({ visible: true, imageId });
+    };
 
+    const confirmDeleteImage = async () => {
+        const imageId = confirmModal.imageId;
+        setConfirmModal({ visible: false, imageId: null });
+        if (!imageId) return;
         try {
             const res = await fetch(getApiUrl(`/api/events/images/${imageId}`), {
                 method: 'DELETE',
                 credentials: 'include'
             });
-
             if (res.ok) {
                 setGalleryImages(galleryImages.filter(img => img._id !== imageId));
                 showToast('Image deleted successfully');
@@ -589,6 +594,43 @@ export default function EditEvent({ params }: { params: Promise<{ id: string }> 
                     )}
                 </div>
             </div>
+
+            {/* Custom Confirm Modal */}
+            {confirmModal.visible && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    {/* Backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                        onClick={() => setConfirmModal({ visible: false, imageId: null })}
+                    />
+                    {/* Card */}
+                    <div className="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 flex flex-col items-center gap-4 animate-[fadeInScale_0.2s_ease-out]">
+                        <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
+                            <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </div>
+                        <div className="text-center">
+                            <h3 className="text-lg font-bold text-[#0A1A2F] mb-1">Delete Image?</h3>
+                            <p className="text-sm text-[#64748B]">This action cannot be undone. The image will be permanently removed.</p>
+                        </div>
+                        <div className="flex gap-3 w-full mt-2">
+                            <button
+                                onClick={() => setConfirmModal({ visible: false, imageId: null })}
+                                className="flex-1 px-4 py-2.5 rounded-xl border border-[#D4E4F7] text-[#475569] font-medium hover:bg-[#F8FAFC] transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmDeleteImage}
+                                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Toast Notification */}
             {toast && (
