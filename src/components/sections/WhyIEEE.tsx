@@ -171,6 +171,7 @@ const benefits = [
     stat: "400K+",
     statLabel: "Members",
     color: "from-blue-600 to-indigo-600",
+    href: "https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=65",
   },
   {
     icon: TechnicalIcon,
@@ -179,6 +180,7 @@ const benefits = [
     stat: "50+",
     statLabel: "Workshops",
     color: "from-cyan-500 to-blue-500",
+    href: "https://www.ieee.org/advancing-technology",
   },
   {
     icon: CareerIcon,
@@ -187,6 +189,7 @@ const benefits = [
     stat: "95%",
     statLabel: "Placement",
     color: "from-indigo-600 to-violet-600",
+    href: "https://www.ieee.org/education-career/advance-your-career",
   },
   {
     icon: InnovationIcon,
@@ -195,6 +198,7 @@ const benefits = [
     stat: "25+",
     statLabel: "Projects",
     color: "from-violet-600 to-fuchsia-600",
+    href: "https://innovationatwork.ieee.org/",
   },
 ];
 
@@ -302,14 +306,20 @@ const BenefitCard = ({ benefit, index, isInView }: any) => {
               </span>
             </div>
 
-            <div className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center border border-slate-200 text-slate-400 transition-all duration-300",
-              isHovered ? "bg-blue-600 border-blue-600 text-white -rotate-45" : ""
-            )}>
+            <a
+              href={benefit.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Learn more about ${benefit.title}`}
+              className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center border border-slate-200 text-slate-400 transition-all duration-300",
+                isHovered ? "bg-blue-600 border-blue-600 text-white -rotate-45" : ""
+              )}
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </div>
+            </a>
           </div>
         </div>
       </motion.div>
