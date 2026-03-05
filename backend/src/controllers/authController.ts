@@ -31,7 +31,7 @@ export async function loginAdmin(req: Request, res: Response) {
       httpOnly: true,
       secure: isProduction,
       sameSite,
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 1 * 24 * 60 * 60 * 1000 // 1 day
     };
 
     // Set HttpOnly cookie
